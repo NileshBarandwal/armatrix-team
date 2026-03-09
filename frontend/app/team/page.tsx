@@ -357,14 +357,14 @@ export default function TeamPage() {
                   <button key={f} onClick={() => { setFilter(f); setSearch(""); }}
                     className="px-3 py-1.5 rounded-md text-sm transition-all duration-200"
                     style={{
-                      background: active ? "var(--bg-elevated)" : "transparent",
-                      color: active ? "var(--text-primary)" : "var(--text-muted)",
-                      border: active ? "1px solid var(--border-hover)" : "1px solid transparent",
+                      background: active ? "rgba(59,130,246,0.1)" : "transparent",
+                      color: active ? "var(--accent)" : "var(--text-muted)",
+                      border: active ? "1px solid rgba(59,130,246,0.28)" : "1px solid transparent",
                       fontWeight: active ? 500 : 400,
                     }}>
                     {f}
                     {count > 0 && (
-                      <span className="ml-1.5 text-xs" style={{ color: active ? "var(--text-secondary)" : "var(--text-muted)" }}>{count}</span>
+                      <span className="ml-1.5 text-xs" style={{ color: active ? "rgba(59,130,246,0.65)" : "var(--text-muted)" }}>{count}</span>
                     )}
                   </button>
                 );

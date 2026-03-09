@@ -191,7 +191,8 @@ export default function MemberModal({ member, onClose, onSubmit }: Props) {
           transition: border-color 0.15s;
         }
         .field-input:focus {
-          border-color: var(--border-hover);
+          border-color: var(--accent);
+          box-shadow: 0 0 0 3px rgba(59,130,246,0.08);
         }
         .field-input::placeholder {
           color: var(--text-muted);

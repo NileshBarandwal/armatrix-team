@@ -3,6 +3,27 @@
 import { useRef } from "react";
 import { TeamMember } from "@/lib/api";
 
+const DEPT_STYLES: Record<string, { badge: string; dot: string }> = {
+  Leadership: {
+    badge: "rgba(139,92,246,0.12)",
+    dot: "#a78bfa",
+  },
+  Engineering: {
+    badge: "rgba(59,130,246,0.12)",
+    dot: "#60a5fa",
+  },
+  Operations: {
+    badge: "rgba(16,185,129,0.12)",
+    dot: "#34d399",
+  },
+  Design: {
+    badge: "rgba(249,115,22,0.12)",
+    dot: "#fb923c",
+  },
+};
+
+const DEFAULT_DEPT = { badge: "rgba(255,255,255,0.06)", dot: "#6b7280" };
+
 interface Props {
   member: TeamMember;
   onEdit: (member: TeamMember) => void;
@@ -11,6 +32,7 @@ interface Props {
 
 export default function TeamCard({ member, onEdit, onDelete }: Props) {
   const cardRef = useRef<HTMLDivElement>(null);
+  const dept = DEPT_STYLES[member.department] ?? DEFAULT_DEPT;
 
   const initials = member.name
     .split(" ")
@@ -25,11 +47,11 @@ export default function TeamCard({ member, onEdit, onDelete }: Props) {
     const rect = card.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
-    const rotX = ((y - rect.height / 2) / (rect.height / 2)) * -7;
-    const rotY = ((x - rect.width  / 2) / (rect.width  / 2)) *  7;
+    const rotX = ((y - rect.height / 2) / (rect.height / 2)) * -6;
+    const rotY = ((x - rect.width  / 2) / (rect.width  / 2)) *  6;
     card.style.transform = `perspective(700px) rotateX(${rotX}deg) rotateY(${rotY}deg) translateY(-4px)`;
-    card.style.borderColor = "var(--border-hover)";
-    card.style.boxShadow = "0 20px 40px rgba(0,0,0,0.4)";
+    card.style.borderColor = "rgba(59,130,246,0.35)";
+    card.style.boxShadow = "0 0 0 1px rgba(59,130,246,0.15), 0 20px 40px rgba(59,130,246,0.1), 0 0 60px rgba(59,130,246,0.04)";
   };
 
   const handleMouseLeave = () => {
@@ -47,7 +69,7 @@ export default function TeamCard({ member, onEdit, onDelete }: Props) {
       style={{
         background: "var(--bg-raised)",
         border: "1px solid var(--border)",
-        transition: "transform 0.18s ease, border-color 0.2s ease, box-shadow 0.2s ease",
+        transition: "transform 0.18s ease, border-color 0.2s ease, box-shadow 0.25s ease",
         willChange: "transform",
         transformStyle: "preserve-3d",
       }}
@@ -56,20 +78,16 @@ export default function TeamCard({ member, onEdit, onDelete }: Props) {
     >
       {/* Edit / Delete */}
       <div className="absolute top-4 right-4 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-        <button
-          onClick={() => onEdit(member)}
-          title="Edit"
+        <button onClick={() => onEdit(member)} title="Edit"
           className="p-1.5 rounded-lg transition-colors"
           style={{ color: "var(--text-muted)" }}
           onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.color = "var(--text-secondary)")}
           onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.color = "var(--text-muted)")}
         ><EditIcon /></button>
-        <button
-          onClick={() => onDelete(member.id)}
-          title="Remove"
+        <button onClick={() => onDelete(member.id)} title="Remove"
           className="p-1.5 rounded-lg transition-colors"
           style={{ color: "var(--text-muted)" }}
-          onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.color = "#ef4444")}
+          onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.color = "#f87171")}
           onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.color = "var(--text-muted)")}
         ><TrashIcon /></button>
       </div>
@@ -78,26 +96,48 @@ export default function TeamCard({ member, onEdit, onDelete }: Props) {
       <div className="mb-5">
         {member.photo_url ? (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={member.photo_url} alt={member.name} className="w-12 h-12 rounded-full object-cover" style={{ border: "1px solid var(--border)" }} />
+          <img src={member.photo_url} alt={member.name}
+            className="w-12 h-12 rounded-full object-cover"
+            style={{ border: "1px solid var(--border)" }} />
         ) : (
           <div className="w-12 h-12 rounded-full flex items-center justify-center text-sm font-semibold"
-            style={{ background: "var(--bg-elevated)", border: "1px solid var(--border)", color: "var(--text-secondary)" }}>
+            style={{ background: "var(--accent-dim)", border: "1px solid var(--border)", color: "var(--accent)" }}>
             {initials}
           </div>
         )}
       </div>
 
-      <h3 className="font-semibold text-base leading-snug mb-0.5" style={{ color: "var(--text-primary)" }}>{member.name}</h3>
-      <p className="text-sm mb-0.5" style={{ color: "var(--text-secondary)" }}>{member.role}</p>
-      <p className="text-xs mb-4" style={{ color: "var(--text-muted)" }}>{member.department}</p>
-      <p className="text-sm leading-relaxed line-clamp-3 flex-1" style={{ color: "var(--text-muted)" }}>{member.bio}</p>
+      {/* Name + role */}
+      <h3 className="font-semibold text-base leading-snug mb-0.5" style={{ color: "var(--text-primary)" }}>
+        {member.name}
+      </h3>
+      <p className="text-sm mb-3" style={{ color: "var(--text-secondary)" }}>
+        {member.role}
+      </p>
 
+      {/* Department badge */}
+      <div className="mb-4">
+        <span
+          className="inline-flex items-center gap-1.5 text-xs font-medium px-2.5 py-1 rounded-full"
+          style={{ background: dept.badge, color: dept.dot, border: `1px solid ${dept.dot}22` }}
+        >
+          <span style={{ width: 5, height: 5, borderRadius: "50%", background: dept.dot, flexShrink: 0, display: "inline-block" }} />
+          {member.department}
+        </span>
+      </div>
+
+      {/* Bio */}
+      <p className="text-sm leading-relaxed line-clamp-3 flex-1" style={{ color: "var(--text-muted)" }}>
+        {member.bio}
+      </p>
+
+      {/* Social links */}
       {(member.linkedin_url || member.github_url) && (
         <div className="flex gap-3 mt-5 pt-4" style={{ borderTop: "1px solid var(--border)" }}>
           {member.linkedin_url && (
             <a href={member.linkedin_url} target="_blank" rel="noopener noreferrer" title="LinkedIn"
               className="transition-colors" style={{ color: "var(--text-muted)" }}
-              onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.color = "var(--text-primary)")}
+              onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.color = "var(--accent)")}
               onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.color = "var(--text-muted)")}
             ><LinkedInIcon /></a>
           )}
