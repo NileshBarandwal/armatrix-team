@@ -78,9 +78,3 @@ Visit `http://localhost:3000/team`.
 
 ---
 
-## If I had more time
-
-- Persist data with a lightweight DB (SQLite + SQLAlchemy)
-- Add search
-- Drag-to-reorder for the display order field
-- Transition animations between filter tabs
