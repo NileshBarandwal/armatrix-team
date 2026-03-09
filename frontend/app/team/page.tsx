@@ -617,6 +617,170 @@ export default function TeamPage() {
         </div>
       </main>
 
+      <section
+        id="contact"
+        className="relative z-10 px-6 md:px-12 pt-20 pb-12"
+        style={{ borderTop: "1px solid rgba(255,255,255,0.08)", background: "var(--bg)" }}
+      >
+        <div className="max-w-5xl mx-auto">
+          <div className="section-label mb-6">
+            <span className="section-label-arrow">→</span>
+            <span className="section-label-text">CONTACT</span>
+          </div>
+          <h2
+            className="contact-heading text-5xl md:text-7xl font-light mb-12"
+            style={{ fontFamily: "var(--font-display)", color: "var(--text-primary)" }}
+          >
+            Get in touch
+          </h2>
+
+          <div className="space-y-10">
+            <div>
+              <p
+                className="uppercase text-xs tracking-[0.3em] mb-3"
+                style={{ color: "var(--text-muted)", fontFamily: "var(--font-body)", letterSpacing: "0.3em" }}
+              >
+                Start a conversation
+              </p>
+              <a
+                href="mailto:contact@armatrix.in"
+                className="text-4xl md:text-5xl contact-email"
+                style={{
+                  fontFamily: "var(--font-display)",
+                  textDecoration: "none",
+                  borderBottom: "2px solid rgba(255,255,255,0.25)",
+                  paddingBottom: "0.4rem",
+                  display: "inline-flex",
+                  background: "linear-gradient(135deg, #ffc864 0%, #96b464 100%)",
+                  WebkitBackgroundClip: "text",
+                  WebkitTextFillColor: "transparent",
+                  backgroundClip: "text",
+                }}
+              >
+                contact@armatrix.in
+              </a>
+            </div>
+
+            <div>
+              <p
+                className="text-xl font-medium mb-4"
+                style={{ fontFamily: "var(--font-display)", color: "var(--text-primary)" }}
+              >
+                Our Office:
+              </p>
+              <address
+                className="not-italic leading-relaxed text-lg"
+                style={{ fontFamily: "var(--font-body)", color: "var(--text-secondary)" }}
+              >
+                4th Floor, 444 Jai Tower
+                <br />
+                Sri Balaji Krupa Layout
+                <br />
+                RK Hegde Nagar
+                <br />
+                Bengaluru - 560077
+              </address>
+              <a
+                href="https://maps.app.goo.gl/Kpwd1GqWbXLMFqMT7"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 mt-5 text-base contact-map-link"
+                style={{ color: "var(--text-secondary)", fontFamily: "var(--font-body)" }}
+              >
+                View on Map
+                <svg
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M10 6H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-4" />
+                  <path d="M14 4h6v6" />
+                  <path d="M20 4 10 14" />
+                </svg>
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <footer
+        className="relative z-10"
+        style={{ borderTop: "1px solid rgba(255,255,255,0.08)" }}
+      >
+        <div className="max-w-5xl mx-auto px-6 md:px-12 py-12">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-8">
+            <div className="flex items-center gap-4">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/logo.webp"
+                alt="Armatrix Logo"
+                width={110}
+                height={56}
+                loading="lazy"
+                style={{ filter: "brightness(1.2)" }}
+              />
+            </div>
+            <div className="flex flex-col items-start md:items-end gap-2 text-sm">
+              <a
+                href="https://drive.google.com/drive/folders/1Js1km-jlQXZ7qOTnQt3ktVlDKXLuZdQt?usp=sharing"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ color: "var(--text-secondary)", textDecoration: "none" }}
+                onMouseEnter={(e) => (e.currentTarget.style.color = "var(--text-primary)")}
+                onMouseLeave={(e) => (e.currentTarget.style.color = "var(--text-secondary)")}
+              >
+                Media Kit
+              </a>
+              <a
+                href="https://drive.google.com/file/d/1ty-TytK1a0_HvLeUDKtt9Eirrw5tyJTt/view?usp=sharing"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ color: "var(--text-secondary)", textDecoration: "none" }}
+                onMouseEnter={(e) => (e.currentTarget.style.color = "var(--text-primary)")}
+                onMouseLeave={(e) => (e.currentTarget.style.color = "var(--text-secondary)")}
+              >
+                Privacy Policy
+              </a>
+            </div>
+          </div>
+
+          <div
+            className="my-8"
+            style={{ height: 1, background: "rgba(255,255,255,0.08)" }}
+          />
+
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 text-sm">
+            <p
+              className="flex items-center gap-2"
+              style={{ color: "var(--text-secondary)", fontFamily: "var(--font-body)" }}
+            >
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <circle cx="12" cy="12" r="10" />
+                <path d="M15 9.354a4 4 0 1 0 0 5.292" />
+              </svg>
+              Armatrix 2026 All Rights Reserved
+            </p>
+            <p style={{ color: "var(--text-muted)", fontFamily: "var(--font-body)" }}>
+              Products under development, currently not for sale
+            </p>
+          </div>
+        </div>
+      </footer>
+
       {/* Modals */}
       {modalOpen && (
         <MemberModal member={editTarget} onClose={() => setModalOpen(false)} onSubmit={handleSubmit} />

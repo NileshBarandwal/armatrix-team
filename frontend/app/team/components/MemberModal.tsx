@@ -77,32 +77,33 @@ export default function MemberModal({ member, onClose, onSubmit }: Props) {
   return (
     <div
       className="modal-backdrop fixed inset-0 z-50 flex items-center justify-center p-4"
-      style={{ background: "rgba(0,0,0,0.8)", backdropFilter: "blur(6px)" }}
+      style={{ background: "rgba(0,0,0,0.85)", backdropFilter: "blur(8px)" }}
       onClick={(e) => e.target === e.currentTarget && onClose()}
     >
       <div
-        className="modal-panel w-full max-w-lg rounded-2xl p-6 shadow-2xl"
+        className="modal-panel w-full max-w-lg p-6 shadow-2xl"
         style={{
-          background: "var(--bg-raised)",
-          border: "1px solid var(--border-hover)",
+          background: "#0a0a0a",
+          border: "1px solid rgba(255,255,255,0.12)",
+          borderRadius: "12px",
         }}
       >
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h2 className="text-base font-semibold" style={{ color: "var(--text-primary)" }}>
+            <h2 className="text-base font-semibold" style={{ color: "rgba(255,255,255,0.95)", fontFamily: "var(--font-display)", fontWeight: 500 }}>
               {member ? "Edit member" : "Add member"}
             </h2>
-            <p className="text-xs mt-0.5" style={{ color: "var(--text-muted)" }}>
+            <p className="text-xs mt-0.5" style={{ color: "rgba(255,255,255,0.3)", fontFamily: "var(--font-body)" }}>
               {member ? "Update the details below." : "Fill in the details to add a new team member."}
             </p>
           </div>
           <button
             onClick={onClose}
             className="p-1.5 rounded-lg transition-colors"
-            style={{ color: "var(--text-muted)" }}
-            onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.color = "var(--text-secondary)")}
-            onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.color = "var(--text-muted)")}
+            style={{ color: "rgba(255,255,255,0.3)" }}
+            onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.color = "rgba(255,255,255,0.7)")}
+            onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.color = "rgba(255,255,255,0.3)")}
           >
             <CloseIcon />
           </button>
@@ -149,7 +150,7 @@ export default function MemberModal({ member, onClose, onSubmit }: Props) {
           </div>
 
           {error && (
-            <p className="text-xs px-3 py-2 rounded-lg" style={{ background: "#1a0a0a", color: "#f87171", border: "1px solid #3f1515" }}>
+            <p className="text-xs px-3 py-2" style={{ background: "rgba(239,68,68,0.06)", color: "#f87171", border: "1px solid rgba(239,68,68,0.2)", borderRadius: "8px" }}>
               {error}
             </p>
           )}
@@ -158,18 +159,38 @@ export default function MemberModal({ member, onClose, onSubmit }: Props) {
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 py-2.5 rounded-xl text-sm font-medium transition-colors"
-              style={{ color: "var(--text-secondary)", border: "1px solid var(--border)" }}
-              onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.borderColor = "var(--border-hover)")}
-              onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.borderColor = "var(--border)")}
+              className="flex-1 py-2.5 text-sm font-medium transition-colors"
+              style={{
+                color: "rgba(255,255,255,0.65)",
+                border: "1px solid rgba(255,255,255,0.1)",
+                borderRadius: "8px",
+                fontFamily: "var(--font-body)",
+              }}
+              onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.borderColor = "rgba(255,255,255,0.2)")}
+              onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.borderColor = "rgba(255,255,255,0.1)")}
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="flex-1 py-2.5 rounded-xl text-sm font-semibold transition-opacity disabled:opacity-50 hover:opacity-90"
-              style={{ background: "var(--btn-primary-bg)", color: "var(--btn-primary-text)" }}
+              className="flex-1 py-2.5 text-sm font-medium transition-all disabled:opacity-50"
+              style={{
+                background: "linear-gradient(135deg, #ffc864 0%, #96b464 100%)",
+                color: "rgba(0,0,0,0.9)",
+                borderRadius: "8px",
+                border: "1px solid rgba(0,0,0,0.2)",
+                fontFamily: "var(--font-body)",
+                fontWeight: 500,
+              }}
+              onMouseEnter={(e) => {
+                (e.currentTarget as HTMLElement).style.transform = "translateY(-1px)";
+                (e.currentTarget as HTMLElement).style.boxShadow = "0 8px 30px rgba(255,200,100,0.25)";
+              }}
+              onMouseLeave={(e) => {
+                (e.currentTarget as HTMLElement).style.transform = "translateY(0)";
+                (e.currentTarget as HTMLElement).style.boxShadow = "none";
+              }}
             >
               {loading ? "Saving..." : member ? "Save changes" : "Add member"}
             </button>
@@ -181,24 +202,24 @@ export default function MemberModal({ member, onClose, onSubmit }: Props) {
         .field-input {
           width: 100%;
           padding: 8px 12px;
-          border-radius: 10px;
-          background: var(--bg);
-          border: 1px solid var(--border);
-          color: var(--text-primary);
+          border-radius: 8px;
+          background: rgba(255,255,255,0.03);
+          border: 1px solid rgba(255,255,255,0.1);
+          color: rgba(255,255,255,0.95);
           font-size: 13px;
-          font-family: var(--font-inter), sans-serif;
+          font-family: var(--font-body);
           outline: none;
-          transition: border-color 0.15s;
+          transition: border-color 0.15s, box-shadow 0.15s;
         }
         .field-input:focus {
-          border-color: var(--accent);
-          box-shadow: 0 0 0 3px rgba(59,130,246,0.08);
+          border-color: rgba(255,200,100,0.5);
+          box-shadow: 0 0 0 3px rgba(255,200,100,0.06);
         }
         .field-input::placeholder {
-          color: var(--text-muted);
+          color: rgba(255,255,255,0.2);
         }
         select.field-input option {
-          background: var(--bg-raised);
+          background: #0a0a0a;
         }
       `}</style>
     </div>
@@ -208,7 +229,8 @@ export default function MemberModal({ member, onClose, onSubmit }: Props) {
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div>
-      <label className="block text-xs font-medium mb-1.5" style={{ color: "var(--text-muted)" }}>
+      <label className="block text-xs font-medium mb-1.5"
+        style={{ color: "rgba(255,255,255,0.3)", fontFamily: "var(--font-body)", letterSpacing: "0.08em", textTransform: "uppercase" }}>
         {label}
       </label>
       {children}
