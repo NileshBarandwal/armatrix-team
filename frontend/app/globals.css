@@ -109,19 +109,6 @@ body::after {
   background-clip: text;
 }
 
-/* ── Flowing gradient animation for hero ── */
-@keyframes gradientFlow {
-  0%   { background-position: 0% center; }
-  100% { background-position: 200% center; }
-}
-.gradient-flow {
-  background: linear-gradient(90deg, #ffc864 0%, #96b464 30%, #e8d48a 55%, #96b464 75%, #ffc864 100%);
-  background-size: 200% auto;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  animation: gradientFlow 4s linear infinite;
-}
 
 /* ── Nav underline slide ── */
 .nav-link {
