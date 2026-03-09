@@ -280,71 +280,60 @@ export default function TeamPage() {
         }}
       />
 
-      {/* Cursor — trailing ring (lerp lag) */}
+      {/* Cursor — trailing dot (lerp lag, larger) */}
       <div
         ref={cursorRingRef}
         className="pointer-events-none fixed hidden md:block"
         style={{
-          width: 36, height: 36,
+          width: 18, height: 18,
           borderRadius: "50%",
-          border: "1px solid rgba(255,200,100,0.55)",
+          background: "rgba(255,200,100,0.35)",
           transform: "translate(-50%, -50%)",
           top: "50%", left: "50%",
           zIndex: 3,
-          boxShadow: "0 0 8px rgba(255,200,100,0.2), inset 0 0 8px rgba(255,200,100,0.05)",
+          boxShadow: "0 0 16px rgba(255,200,100,0.45)",
         }}
       />
 
-      {/* Cursor — exact dot */}
+      {/* Cursor — exact dot (crisp center) */}
       <div
         ref={cursorDotRef}
         className="pointer-events-none fixed hidden md:block"
         style={{
-          width: 5, height: 5,
+          width: 8, height: 8,
           borderRadius: "50%",
           background: "linear-gradient(135deg, #ffc864, #96b464)",
           transform: "translate(-50%, -50%)",
           top: "50%", left: "50%",
           zIndex: 4,
-          boxShadow: "0 0 6px rgba(255,200,100,0.8)",
+          boxShadow: "0 0 10px rgba(255,200,100,0.9)",
         }}
       />
 
-      {/* Nav */}
+      {/* Nav — fixed transparent overlay, darkens on scroll */}
       <motion.nav
-        className="sticky top-0 z-40 flex items-center justify-between"
-        style={{ borderBottom: "1px solid rgba(255,255,255,0.06)", backdropFilter: "blur(20px)" }}
+        className="fixed top-0 left-0 right-0 z-40 flex items-center justify-between"
         animate={{
-          padding: scrolled ? "10px 48px" : "18px 48px",
-          background: scrolled ? "rgba(0,0,0,0.98)" : "rgba(0,0,0,0.75)",
+          padding: scrolled ? "10px 48px" : "20px 48px",
+          background: scrolled ? "rgba(0,0,0,0.92)" : "transparent",
+          backdropFilter: scrolled ? "blur(20px)" : "blur(0px)",
+          borderBottom: scrolled ? "1px solid rgba(255,255,255,0.06)" : "1px solid transparent",
         }}
-        transition={{ duration: 0.3 }}
+        transition={{ duration: 0.35 }}
       >
         {/* Logo */}
-        <a href="https://armatrix.in" className="flex items-center gap-3" style={{ textDecoration: "none" }}>
-          <motion.div
-            className="flex items-center justify-center font-bold"
-            style={{
-              background: "linear-gradient(135deg, #ffc864 0%, #96b464 100%)",
-              color: "rgba(0,0,0,0.9)",
-              borderRadius: "6px",
-              fontFamily: "var(--font-display)",
-              fontWeight: 700,
-            }}
-            animate={{ width: scrolled ? 24 : 28, height: scrolled ? 24 : 28, fontSize: scrolled ? 12 : 14 }}
+        <a href="https://armatrix.in" className="flex items-center" style={{ textDecoration: "none" }}>
+          <motion.img
+            // eslint-disable-next-line @next/next/no-img-element
+            src="/logo.webp"
+            alt="Armatrix"
+            animate={{ height: scrolled ? 44 : 56 }}
             transition={{ duration: 0.3 }}
-          >A</motion.div>
-          <span style={{
-            fontFamily: "var(--font-display)",
-            fontWeight: 400,
-            fontSize: "1rem",
-            letterSpacing: "0.15em",
-            textTransform: "uppercase",
-            color: "var(--text-primary)",
-          }}>Armatrix</span>
+            style={{ width: "auto", display: "block" }}
+          />
         </a>
 
-        {/* Nav links */}
+        {/* Nav links with underline slide */}
         <div className="flex items-center gap-8">
           {["Home", "Careers", "Blog", "Contact"].map((link) => (
             <a key={link}
@@ -358,8 +347,8 @@ export default function TeamPage() {
 
       <main className="relative z-10">
 
-        {/* Hero */}
-        <div className="max-w-6xl mx-auto px-6 md:px-12 pt-20 md:pt-32 pb-16">
+        {/* Hero — extra top padding to clear fixed nav */}
+        <div className="max-w-6xl mx-auto px-6 md:px-12 pt-32 md:pt-44 pb-16">
 
           {/* Section label */}
           <motion.div
