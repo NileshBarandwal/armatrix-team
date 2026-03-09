@@ -16,28 +16,39 @@ import ToastContainer, { ToastData } from "./components/Toast";
 const FILTERS = ["All", "Leadership", "Engineering", "Operations"];
 
 /* ── Count-up hook ── */
-function useCountUp(target: number, active: boolean, duration = 1000) {
+function useCountUp(target: number, active: boolean, duration = 900) {
   const [value, setValue] = useState(0);
   useEffect(() => {
     if (!active || target === 0) return;
+    setValue(0);
     let frame = 0;
-    const steps = 36;
-    const step = target / steps;
+    const steps = 40;
     const interval = setInterval(() => {
       frame++;
       if (frame >= steps) { setValue(target); clearInterval(interval); }
-      else setValue(Math.floor(step * frame));
+      else setValue(Math.round((target / steps) * frame));
     }, duration / steps);
     return () => clearInterval(interval);
   }, [target, active, duration]);
   return value;
 }
 
-function Stat({ target, label, active }: { target: number; label: string; active: boolean }) {
+function AnimatedStat({ target, label, active }: { target: number; label: string; active: boolean }) {
   const v = useCountUp(target, active);
   return (
     <div className="reveal">
-      <span className="text-3xl font-bold tracking-tight tabular-nums" style={{ color: "var(--text-primary)" }}>{v}</span>
+      <span className="text-3xl font-bold tracking-tight tabular-nums" style={{ color: "var(--text-primary)" }}>
+        {v}
+      </span>
+      <span className="text-sm ml-2" style={{ color: "var(--text-muted)" }}>{label}</span>
+    </div>
+  );
+}
+
+function StaticStat({ value, label }: { value: string | number; label: string }) {
+  return (
+    <div className="reveal">
+      <span className="text-3xl font-bold tracking-tight" style={{ color: "var(--text-primary)" }}>{value}</span>
       <span className="text-sm ml-2" style={{ color: "var(--text-muted)" }}>{label}</span>
     </div>
   );
@@ -78,7 +89,6 @@ export default function TeamPage() {
   const [statsVisible, setStatsVisible] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
-  const statsRef = useRef<HTMLDivElement>(null);
   const cursorRef = useRef<HTMLDivElement>(null);
   const toastId = useRef(0);
 
@@ -101,27 +111,24 @@ export default function TeamPage() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  /* Stats count-up trigger */
+  /* Trigger stats AFTER data loads — fixed: no longer depends on IntersectionObserver timing */
   useEffect(() => {
-    if (!statsRef.current) return;
-    const obs = new IntersectionObserver(
-      ([e]) => { if (e.isIntersecting) setStatsVisible(true); },
-      { threshold: 0.4 }
-    );
-    obs.observe(statsRef.current);
-    return () => obs.disconnect();
-  }, []);
+    if (!loading && members.length > 0) {
+      const t = setTimeout(() => setStatsVisible(true), 300);
+      return () => clearTimeout(t);
+    }
+  }, [loading, members.length]);
 
-  /* Scroll-triggered reveal for all .reveal elements */
+  /* Scroll-triggered reveals */
   useEffect(() => {
     const els = document.querySelectorAll(".reveal");
     const obs = new IntersectionObserver(
       (entries) => entries.forEach((e) => { if (e.isIntersecting) e.target.classList.add("visible"); }),
-      { threshold: 0.15 }
+      { threshold: 0.1 }
     );
     els.forEach((el) => obs.observe(el));
     return () => obs.disconnect();
-  }, [members]);
+  }, [members, loading]);
 
   const addToast = useCallback((message: string, type: "success" | "error" = "success") => {
     const id = ++toastId.current;
@@ -188,6 +195,9 @@ export default function TeamPage() {
   return (
     <div className="min-h-screen page-enter relative" style={{ background: "var(--bg)" }}>
 
+      {/* Animated top line */}
+      <div className="top-line" />
+
       {/* Floating background orbs */}
       <div className="orb orb-1" />
       <div className="orb orb-2" />
@@ -198,21 +208,21 @@ export default function TeamPage() {
         ref={cursorRef}
         className="pointer-events-none fixed z-0 rounded-full hidden md:block"
         style={{
-          width: 480, height: 480,
-          background: "radial-gradient(circle, rgba(255,255,255,0.032) 0%, transparent 65%)",
+          width: 500, height: 500,
+          background: "radial-gradient(circle, rgba(255,255,255,0.03) 0%, transparent 65%)",
           transform: "translate(-50%, -50%)",
           transition: "left 0.1s ease, top 0.1s ease",
           top: "50%", left: "50%",
         }}
       />
 
-      {/* Nav — shrinks on scroll */}
+      {/* Nav */}
       <nav
-        className="sticky top-0 z-40 flex items-center justify-between px-6 md:px-12 transition-all duration-300"
+        className="sticky top-0 z-40 flex items-center justify-between transition-all duration-300"
         style={{
-          padding: scrolled ? "12px 48px" : "16px 48px",
+          padding: scrolled ? "10px 48px" : "16px 48px",
           borderBottom: "1px solid var(--border)",
-          background: scrolled ? "rgba(10,10,10,0.97)" : "rgba(10,10,10,0.85)",
+          background: scrolled ? "rgba(10,10,10,0.98)" : "rgba(10,10,10,0.82)",
           backdropFilter: "blur(16px)",
         }}
       >
@@ -220,26 +230,20 @@ export default function TeamPage() {
           <div
             className="flex items-center justify-center text-xs font-bold rounded transition-all duration-300"
             style={{
-              width: scrolled ? 22 : 26,
-              height: scrolled ? 22 : 26,
-              background: "var(--text-primary)",
-              color: "var(--bg)",
+              width: scrolled ? 22 : 26, height: scrolled ? 22 : 26,
+              background: "var(--text-primary)", color: "var(--bg)",
             }}
-          >
-            A
-          </div>
+          >A</div>
           <span className="text-sm font-semibold tracking-widest uppercase" style={{ color: "var(--text-primary)" }}>
             Armatrix
           </span>
         </a>
-
         <div className="flex items-center gap-6">
           {["Home", "Careers", "Blog", "Contact"].map((link) => (
             <a
               key={link}
               href={link === "Home" ? "https://armatrix.in" : `https://armatrix.in/${link.toLowerCase()}`}
-              target="_blank"
-              rel="noopener noreferrer"
+              target="_blank" rel="noopener noreferrer"
               className="hidden sm:block text-xs font-medium tracking-widest uppercase transition-colors"
               style={{ color: "var(--text-muted)" }}
               onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.color = "var(--text-secondary)")}
@@ -255,38 +259,45 @@ export default function TeamPage() {
 
         {/* Hero */}
         <div className="mb-16 md:mb-24">
-          <p className="word-animate text-xs font-medium tracking-widest uppercase mb-6" style={{ color: "var(--text-muted)", animationDelay: "50ms" }}>
+          <p
+            className="word-animate text-xs font-medium tracking-widest uppercase mb-6"
+            style={{ color: "var(--text-muted)", animationDelay: "50ms" }}
+          >
             The team
           </p>
           <h1
             className="font-bold leading-none tracking-tight mb-6"
             style={{ fontSize: "clamp(3rem, 8vw, 6rem)", letterSpacing: "-0.035em", lineHeight: 1.02 }}
           >
-            <span className="word-animate block" style={{ color: "var(--text-primary)", animationDelay: "120ms" }}>
+            <span className="word-animate block" style={{ color: "var(--text-primary)", animationDelay: "130ms" }}>
               People building
             </span>
-            <span className="word-animate block" style={{ color: "var(--text-secondary)", animationDelay: "220ms" }}>
+            {/* Animated shimmer gradient on "the future." */}
+            <span className="word-animate shimmer-text block" style={{ animationDelay: "230ms" }}>
               the future.
             </span>
           </h1>
-          <p className="word-animate text-base md:text-lg max-w-lg leading-relaxed" style={{ color: "var(--text-muted)", animationDelay: "340ms" }}>
+          <p
+            className="word-animate text-base md:text-lg max-w-lg leading-relaxed"
+            style={{ color: "var(--text-muted)", animationDelay: "360ms" }}
+          >
             A small, focused team working on snake-like robotic arms for
             industrial inspection — reaching places humans can&apos;t safely go.
           </p>
 
-          {/* Stats */}
+          {/* Stats — only shown after data loads, count-up starts 300ms later */}
           {!loading && members.length > 0 && (
-            <div ref={statsRef} className="flex flex-wrap items-center gap-6 mt-12">
-              <Stat target={members.length} label="team members" active={statsVisible} />
+            <div className="flex flex-wrap items-center gap-6 mt-12">
+              <AnimatedStat target={members.length} label="team members" active={statsVisible} />
               <Divider />
-              <Stat target={departments.length} label="departments" active={statsVisible} />
+              <AnimatedStat target={departments.length} label="departments" active={statsVisible} />
               <Divider />
-              <Stat target={2023} label="founded" active={statsVisible} />
+              <StaticStat value="2023" label="founded" />
             </div>
           )}
         </div>
 
-        {/* Controls — search + filters + add button in one row */}
+        {/* Controls row */}
         <div className="reveal flex flex-col sm:flex-row sm:items-center gap-3 mb-12">
           {/* Search */}
           <div className="relative">
@@ -311,8 +322,8 @@ export default function TeamPage() {
             />
           </div>
 
-          {/* Filter tabs */}
-          <div className="flex gap-1 p-1 rounded-lg flex-wrap" style={{ background: "var(--bg-raised)", border: "1px solid var(--border)" }}>
+          {/* Filters */}
+          <div className="flex gap-1 p-1 rounded-lg" style={{ background: "var(--bg-raised)", border: "1px solid var(--border)" }}>
             {FILTERS.map((f) => {
               const count = f === "All" ? members.length : members.filter((m) => m.department === f).length;
               const active = filter === f;
@@ -339,7 +350,7 @@ export default function TeamPage() {
             })}
           </div>
 
-          {/* Add member — next to filters */}
+          {/* Add member */}
           <button
             onClick={() => { setEditTarget(null); setModalOpen(true); }}
             className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 hover:opacity-90 active:scale-95 whitespace-nowrap ml-auto"
@@ -353,7 +364,7 @@ export default function TeamPage() {
           </button>
         </div>
 
-        {/* Loading skeletons */}
+        {/* Loading */}
         {loading && (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {Array.from({ length: 6 }).map((_, i) => <SkeletonCard key={i} />)}
@@ -365,7 +376,7 @@ export default function TeamPage() {
           <div className="py-24 text-center reveal">
             <p className="text-sm mb-3" style={{ color: "#f87171" }}>{error}</p>
             <p className="text-xs mb-4" style={{ color: "var(--text-muted)" }}>
-              Make sure <code className="px-1 py-0.5 rounded text-xs" style={{ background: "var(--bg-elevated)" }}>NEXT_PUBLIC_API_URL</code> is set correctly.
+              Check that <code className="px-1 py-0.5 rounded" style={{ background: "var(--bg-elevated)" }}>NEXT_PUBLIC_API_URL</code> is set correctly in your environment.
             </p>
             <button
               onClick={() => { setError(""); setLoading(true); fetchTeam(); }}
@@ -377,7 +388,7 @@ export default function TeamPage() {
           </div>
         )}
 
-        {/* Empty state */}
+        {/* Empty */}
         {!loading && !error && filtered.length === 0 && (
           <div className="py-24 text-center">
             <p className="text-sm" style={{ color: "var(--text-muted)" }}>
@@ -391,7 +402,7 @@ export default function TeamPage() {
           </div>
         )}
 
-        {/* Card grid — key triggers re-animation on filter/search change */}
+        {/* Cards */}
         {!loading && !error && filtered.length > 0 && (
           <div key={`${filterKey}-${search}`} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {filtered.map((member, i) => (
@@ -407,7 +418,7 @@ export default function TeamPage() {
         )}
       </main>
 
-      {/* Modals */}
+      {/* Add/Edit modal */}
       {modalOpen && (
         <MemberModal
           member={editTarget}
@@ -416,6 +427,7 @@ export default function TeamPage() {
         />
       )}
 
+      {/* Delete confirm */}
       {deleteId && (
         <div
           className="modal-backdrop fixed inset-0 z-50 flex items-center justify-center p-4"
@@ -428,7 +440,7 @@ export default function TeamPage() {
             <h3 className="text-base font-semibold mb-2" style={{ color: "var(--text-primary)" }}>Remove member?</h3>
             <p className="text-sm mb-6" style={{ color: "var(--text-muted)" }}>This action cannot be undone.</p>
             <div className="flex gap-3">
-              <button onClick={() => setDeleteId(null)} className="flex-1 py-2.5 rounded-xl text-sm font-medium transition-colors" style={{ color: "var(--text-secondary)", border: "1px solid var(--border)" }}>
+              <button onClick={() => setDeleteId(null)} className="flex-1 py-2.5 rounded-xl text-sm font-medium" style={{ color: "var(--text-secondary)", border: "1px solid var(--border)" }}>
                 Cancel
               </button>
               <button onClick={confirmDelete} className="flex-1 py-2.5 rounded-xl text-sm font-semibold hover:opacity-90 transition-opacity" style={{ background: "#ef4444", color: "#fff" }}>

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Join the Armatrix team and help build robotic arms that access confined and hazardous spaces in critical industrial infrastructure.">
+
+    <link rel="canonical" href="careers.html">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://armatrix.in/careers">
+    <meta property="og:title" content="Careers - Armatrix">
+    <meta property="og:description" content="Join the Armatrix team and help build robotic arms that access confined and hazardous spaces in critical industrial infrastructure.">
+    <meta property="og:image" content="https://armatrix.in/assets/images/logo/armatrix_banner.jpg">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://armatrix.in/careers">
+    <meta name="twitter:title" content="Careers - Armatrix">
+    <meta name="twitter:description" content="Join the Armatrix team and help build robotic arms that access confined and hazardous spaces in critical industrial infrastructure.">
+    <meta name="twitter:image" content="https://armatrix.in/assets/images/logo/armatrix_banner.jpg">
+
+    <title>Careers - Armatrix</title>
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/pages.css">
+    <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+    <!-- Fixed Navbar -->
+    <div class="fixed-navbar fade-in-nav">
+        <div class="navbar-content">
+            <div class="navbar-logo">
+                <a href="index.html">
+                    <img src="assets/images/logo/Logo_2_white.webp" alt="Armatrix Logo" width="120" height="120">
+                </a>
+            </div>
+            <div class="navbar-title">
+                <a href="careers.html#top">
+                    <span class="section-arrow">→</span>
+                    <span class="section-text">CAREERS</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Careers Content -->
+    <section class="fade-in-content page-section">
+        <div class="page-container">
+            <div class="page-header">
+                <h1 class="page-title">Join Our Team</h1>
+                <p class="page-subtitle">Join us in pushing the boundaries of robotics and automation. We're looking for passionate innovators to shape the future.</p>
+            </div>
+
+            <!-- Job Listings -->
+            <div class="page-grid-section">
+                <h2 class="gradient-text section-heading">Open Positions</h2>
+
+                <!-- Loading State -->
+                <div id="loading-state" class="loading-skeleton">
+                    <div class="skeleton-card"></div>
+                    <div class="skeleton-card"></div>
+                    <div class="skeleton-card"></div>
+                </div>
+
+                <!-- Jobs Container (populated by JavaScript) -->
+                <div id="job-listings-container" style="display: none;"></div>
+
+                <!-- Error State -->
+                <div id="error-state" style="display: none;">
+                    <p class="state-message">Unable to load positions. Please try again.</p>
+                    <button id="retry-button" class="retry-button">Retry</button>
+                </div>
+
+                <!-- Empty State -->
+                <div id="empty-state" style="display: none;">
+                    <p class="state-message">No open positions at the moment. Check back soon!</p>
+                </div>
+
+                <!-- General Application -->
+                <div id="general-application" class="general-app-section" style="display: none;">
+                    <p class="general-app-text">
+                        Don't see the perfect role?
+                        <a href="careers.html#" class="gradient-text general-app-link">Apply here</a>
+                        — we're always looking for exceptional talent to join our team.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Include JavaScript modules -->
+    <script type="module" src="js/careers/jobListings.js"></script>
+    <script src="js/utils/gradient-text.js"></script>
+
+    <!-- Footer -->
+    <script src="js/utils/footer.js"></script>
+</body>
+</html>

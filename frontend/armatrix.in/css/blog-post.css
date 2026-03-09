@@ -1,0 +1,48 @@
+/* Blog Post Styles */
+
+.blog-content {
+    font-family: 'Inter', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 300;
+    line-height: 1.8;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.blog-content h2 {
+    font-family: 'Raleway', sans-serif;
+    font-size: 2rem;
+    font-weight: 500;
+    margin-top: 3rem;
+    margin-bottom: 1rem;
+}
+
+.blog-content p {
+    margin: 1.5rem 0;
+}
+
+.blog-content ul {
+    padding-left: 0;
+    margin-left: 0;
+    list-style-position: inside;
+    margin: 1.5rem 0;
+}
+
+.blog-content li {
+    margin: 0.5rem 0;
+}
+
+.blog-meta {
+    font-family: 'Inter', sans-serif;
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.5);
+    margin-bottom: 3rem;
+}
+
+.blog-header-image {
+    width: 100%;
+    max-width: 900px;
+    height: auto;
+    border-radius: 12px;
+    margin: 2rem 0 3rem 0;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}

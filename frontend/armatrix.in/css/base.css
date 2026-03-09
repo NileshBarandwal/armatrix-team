@@ -1,0 +1,53 @@
+/* ========================================
+   Reset & Base
+   ======================================== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+html {
+    scroll-behavior: smooth;
+    scroll-snap-type: y proximity;
+    overflow-x: hidden;
+    background-color: #000000;
+    transition: background-color 0.8s ease;
+}
+
+html.loading {
+    overflow: hidden;
+    height: 100vh;
+}
+
+body {
+    font-family: var(--font-display);
+    background-color: #000000;
+    color: var(--color-white);
+    overflow-x: hidden;
+    line-height: 1.7;
+    font-weight: 400;
+    transition: background-color 0.8s ease;
+}
+
+body.white-bg {
+    background-color: #FFFFFF;
+}
+
+body.loading {
+    overflow: hidden;
+    height: 100vh;
+    position: fixed;
+    width: 100%;
+}
+
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 2rem;
+}

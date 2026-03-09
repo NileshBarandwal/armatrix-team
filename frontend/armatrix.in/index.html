@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="en" class="loading">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Armatrix builds robotic arms for confined and hazardous spaces, enabling inspection and maintenance of critical industrial infrastructure without human risk.">
+
+    <link rel="canonical" href="index.html">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://armatrix.in/">
+    <meta property="og:title" content="Armatrix">
+    <meta property="og:description" content="Armatrix builds robotic arms for confined and hazardous spaces, enabling inspection and maintenance of critical industrial infrastructure without human risk.">
+    <meta property="og:image" content="https://armatrix.in/assets/images/logo/armatrix_banner.jpg">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://armatrix.in/">
+    <meta name="twitter:title" content="Armatrix">
+    <meta name="twitter:description" content="Armatrix builds robotic arms for confined and hazardous spaces, enabling inspection and maintenance of critical industrial infrastructure without human risk.">
+    <meta name="twitter:image" content="https://armatrix.in/assets/images/logo/armatrix_banner.jpg">
+
+    <title>Armatrix</title>
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+
+    <!-- Preconnect -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+
+    <!-- Preload critical assets -->
+    <link rel="preload" as="image" href="assets/images/logo/Logo_2_white.webp" type="image/webp">
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Bundled and minified CSS -->
+    <link rel="stylesheet" href="css/styles.min.css">
+
+    <!-- GSAP -->
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+    <!-- Utility functions for fluid code -->
+    <script>
+        window.isMobile = function() { return window.matchMedia('(max-width: 768px)').matches; };
+        window.isTouchDevice = function() { return window.matchMedia('(hover: none) and (pointer: coarse)').matches; };
+    </script>
+</head>
+<body class="loading">
+    <!-- Landing Page Section -->
+    <section class="landing-section">
+        <!-- Full screen fluid canvas -->
+        <canvas id="fluid-canvas"></canvas>
+
+        <!-- Navigation Bar -->
+        <nav class="navbar">
+            <div class="navbar-logo">
+                <img src="assets/images/logo/Logo_2_white.webp" alt="Armatrix Logo">
+            </div>
+            <div class="navbar-links">
+                <a href="careers.html" target="_blank" rel="noopener noreferrer">CAREERS</a>
+                <a href="blog.html" target="_blank" rel="noopener noreferrer">BLOG</a>
+                <a href="index.html#contact" class="nav-scroll-link">CONTACT</a>
+            </div>
+            <!-- Mobile Menu Button -->
+            <button class="mobile-menu-button" aria-label="Toggle menu">
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+            </button>
+        </nav>
+
+        <!-- Mobile Menu Overlay -->
+        <div class="mobile-menu-overlay">
+            <div class="mobile-menu-content">
+                <a href="careers.html" target="_blank" rel="noopener noreferrer" class="mobile-menu-link">CAREERS</a>
+                <a href="blog.html" target="_blank" rel="noopener noreferrer" class="mobile-menu-link">BLOG</a>
+                <a href="index.html#contact" class="mobile-menu-link nav-scroll-link">CONTACT</a>
+            </div>
+        </div>
+
+        <!-- Scroll Indicator -->
+        <div class="scroll-indicator">
+            <div class="scroll-content">
+                <div class="scroll-square scroll-square-left">
+                    <img src="assets/images/logo/Logo_2_white.webp" alt="Armatrix" class="scroll-square-logo">
+                </div>
+                <span class="scroll-text">SCROLL</span>
+                <div class="scroll-square scroll-square-right">
+                    <img src="assets/images/logo/Logo_2_white.webp" alt="Armatrix" class="scroll-square-logo">
+                </div>
+            </div>
+            <svg class="scroll-wave-svg" preserveAspectRatio="none">
+                <path class="scroll-wave-path-left" d="" fill="none" stroke="rgba(255, 255, 255, 0.9)" stroke-width="2"/>
+                <path class="scroll-wave-path-right" d="" fill="none" stroke="rgba(255, 255, 255, 0.9)" stroke-width="2"/>
+            </svg>
+        </div>
+
+        <!-- Loading Screen -->
+        <div id="loader" class="loader">
+            <div class="loader-text">
+                <span class="word word-1">access</span>
+                <span class="word word-2">revolutionized</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Cursor Circle - persists across entire site -->
+    <div class="loader-cursor-circle"></div>
+
+    <!-- Arm Intro Section -->
+    <section class="arm-intro-section">
+        <div class="arm-intro-content">
+            <h1 class="arm-intro-heading">
+                <span class="arm-intro-heading-line arm-intro-label-line" data-line="0">Snake-like Robotic Arm</span>
+                <span class="arm-intro-heading-line" data-line="1">Robotic arms designed to</span>
+                <span class="arm-intro-heading-line" data-line="2">inspect tight spaces within</span>
+                <span class="arm-intro-heading-line" data-line="3">complex machinery</span>
+            </h1>
+        </div>
+        <!-- Desktop: Static image cards -->
+        <div class="arm-intro-image-card arm-intro-desktop-only" data-position="1">
+            <div class="arm-intro-gradient-glow"></div>
+            <div class="arm-intro-images-clip">
+                <img src="assets/images/arm-intro/Frame%201.png" alt="Robotic Arm Frame 1" class="arm-intro-image" loading="lazy">
+            </div>
+        </div>
+        <div class="arm-intro-image-card arm-intro-desktop-only" data-position="2">
+            <div class="arm-intro-gradient-glow"></div>
+            <div class="arm-intro-images-clip">
+                <img src="assets/images/arm-intro/Frame%202.png" alt="Robotic Arm Frame 2" class="arm-intro-image" loading="lazy">
+            </div>
+        </div>
+        <div class="arm-intro-image-card arm-intro-desktop-only" data-position="3">
+            <div class="arm-intro-gradient-glow"></div>
+            <div class="arm-intro-images-clip">
+                <img src="assets/images/arm-intro/Frame%203.png" alt="Robotic Arm Frame 3" class="arm-intro-image" loading="lazy">
+            </div>
+        </div>
+        <!-- Mobile: Original swipe wrapper -->
+        <div class="arm-intro-images-wrapper arm-intro-mobile-only">
+            <div class="arm-intro-images-clip">
+                <div class="arm-intro-image-container" data-frame="1">
+                    <img src="assets/images/arm-intro/Frame%201.png" alt="Robotic Arm Frame 1" class="arm-intro-image" loading="lazy">
+                </div>
+                <div class="arm-intro-image-container" data-frame="2">
+                    <img src="assets/images/arm-intro/Frame%202.png" alt="Robotic Arm Frame 2" class="arm-intro-image" loading="lazy">
+                </div>
+                <div class="arm-intro-image-container" data-frame="3">
+                    <img src="assets/images/arm-intro/Frame%203.png" alt="Robotic Arm Frame 3" class="arm-intro-image" loading="lazy">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Masked Video Section -->
+    <section id="masked-video-section" class="masked-video-section">
+        <div class="video-mask-wrapper">
+            <!-- Unmasked video layer (underneath) -->
+            <video class="unmasked-video" muted loop playsinline preload="auto">
+                <source src="assets/videos/mask-video/websitelandscapevideo.mp4" type="video/mp4">
+            </video>
+            <div class="video-logo-glow"></div>
+            <!-- Masked video layer (on top, will fade out) -->
+            <video class="masked-video" muted loop playsinline preload="auto">
+                <source src="assets/videos/mask-video/websitelandscapevideo.mp4" type="video/mp4">
+            </video>
+            <!-- Mute button - commented out as video has no audio -->
+            <!-- <button class="video-mute-btn" aria-label="Toggle mute">
+                <svg class="mute-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                    <path class="sound-waves" d="M15.54 8.46a5 5 0 0 1 0 7.07M19.07 4.93a10 10 0 0 1 0 14.14"></path>
+                </svg>
+                <svg class="unmute-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                    <line x1="23" y1="9" x2="17" y2="15"></line>
+                    <line x1="17" y1="9" x2="23" y2="15"></line>
+                </svg>
+            </button> -->
+        </div>
+    </section>
+
+    <!-- Arm Description Section -->
+    <section class="arm-description-section">
+        <!-- Desktop Version: Single Static Image -->
+        <div class="arm-description-desktop">
+            <img src="assets/images/arm-description/arm-desc.webp" alt="Robotic Arm Description" class="arm-description-image" loading="lazy">
+        </div>
+
+        <!-- Mobile Version: Static Image with Swipeable Text -->
+        <div class="arm-description-mobile">
+            <img src="assets/images/arm-description/phone-arm-curl-cropped.webp" alt="Robotic Arm" class="arm-curl-mobile-image" loading="lazy">
+
+            <!-- Swipeable text container -->
+            <div class="arm-mobile-text-container">
+                <div class="arm-mobile-text-wrapper">
+                    <div class="arm-mobile-text-slide active" data-slide="0">
+                        <h3>External Actuation System</h3>
+                        <p>Designed for safe operation in hazardous conditions</p>
+                    </div>
+                    <div class="arm-mobile-text-slide" data-slide="1">
+                        <h3>Modular End Effector</h3>
+                        <p>Visual Inspection | Welding | Painting</p>
+                    </div>
+                    <div class="arm-mobile-text-slide" data-slide="2">
+                        <h3>AI Powered Navigation</h3>
+                        <p>Allows realtime adaptability in complex workspaces</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dots navigation -->
+            <div class="arm-mobile-dots">
+                <span class="arm-mobile-dot active" data-slide="0"></span>
+                <span class="arm-mobile-dot" data-slide="1"></span>
+                <span class="arm-mobile-dot" data-slide="2"></span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Investors Section -->
+    <section class="investors-section">
+        <!-- "BACKED BY" Band -->
+        <div class="backed-by-band backed-by-band-top">
+            <svg class="backed-by-icon-left" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
+                <path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/>
+            </svg>
+            <span class="backed-by-text-center">backed <span class="stroke">by</span></span>
+            <svg class="backed-by-icon-right" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
+                <path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/>
+            </svg>
+        </div>
+
+        <!-- Investors Scrolling Band -->
+        <div class="investors-scroll-container">
+            <div class="investors-scroll-track">
+                <div class="investor-card">
+                    <div class="investor-logo-container">
+                        <img src="assets/images/investors/grad_capital.webp" alt="grad Capital" loading="lazy">
+                    </div>
+                    <p class="investor-name">gradCapital</p>
+                </div>
+                <div class="investor-card">
+                    <div class="investor-logo-container">
+                        <img src="assets/images/investors/emergent%20ventures.webp" alt="Emergent Ventures" loading="lazy">
+                    </div>
+                    <p class="investor-name">Emergent Ventures</p>
+                </div>
+                <div class="investor-card">
+                    <div class="investor-logo-container">
+                        <img src="assets/images/investors/pi%20ventures%20cropped.webp" alt="pi Ventures" loading="lazy">
+                    </div>
+                    <p class="investor-name">pi Ventures</p>
+                </div>
+                <div class="investor-card">
+                    <div class="investor-logo-container">
+                        <img src="assets/images/investors/Inuka-Capital%20cropped.webp" alt="Inuka Capital" class="invert-logo" loading="lazy">
+                    </div>
+                    <p class="investor-name">Inuka Capital</p>
+                </div>
+                <div class="investor-card">
+                    <div class="investor-logo-container">
+                        <img src="assets/images/investors/turbostart.webp" alt="Turbostart" loading="lazy">
+                    </div>
+                    <p class="investor-name">Turbostart</p>
+                </div>
+                <div class="investor-card">
+                    <div class="investor-logo-container">
+                        <img src="assets/images/investors/boost%20vc.webp" alt="Boost VC" loading="lazy">
+                    </div>
+                    <p class="investor-name">Boost VC</p>
+                </div>
+                <div class="investor-card">
+                    <div class="investor-logo-container">
+                        <img src="assets/images/investors/boundless%20ventures.webp" alt="Boundless Ventures" class="invert-logo" loading="lazy">
+                    </div>
+                    <p class="investor-name">Boundless Ventures</p>
+                </div>
+                <div class="investor-card">
+                    <div class="investor-logo-container">
+                        <img src="assets/images/investors/WTFund.webp" alt="WTFund" loading="lazy">
+                    </div>
+                    <p class="investor-name">WTFund</p>
+                </div>
+                <div class="investor-card">
+                    <div class="investor-logo-container">
+                        <img src="assets/images/investors/shell%20e4.webp" alt="Shell E4" loading="lazy">
+                    </div>
+                    <p class="investor-name">Shell E4</p>
+                </div>
+                <!-- Duplicate set for seamless loop -->
+                <div class="investor-card">
+                    <div class="investor-logo-container">
+                        <img src="assets/images/investors/grad_capital.webp" alt="grad Capital" loading="lazy">
+                    </div>
+                    <p class="investor-name">gradCapital</p>
+                </div>
+                <div class="investor-card">
+                    <div class="investor-logo-container">
+                        <img src="assets/images/investors/emergent%20ventures.webp" alt="Emergent Ventures" loading="lazy">
+                    </div>
+                    <p class="investor-name">Emergent Ventures</p>
+                </div>
+                <div class="investor-card">
+                    <div class="investor-logo-container">
+                        <img src="assets/images/investors/pi%20ventures%20cropped.webp" alt="pi Ventures" loading="lazy">
+                    </div>
+                    <p class="investor-name">pi Ventures</p>
+                </div>
+                <div class="investor-card">
+                    <div class="investor-logo-container">
+                        <img src="assets/images/investors/Inuka-Capital%20cropped.webp" alt="Inuka Capital" class="invert-logo" loading="lazy">
+                    </div>
+                    <p class="investor-name">Inuka Capital</p>
+                </div>
+                <div class="investor-card">
+                    <div class="investor-logo-container">
+                        <img src="assets/images/investors/turbostart.webp" alt="Turbostart" loading="lazy">
+                    </div>
+                    <p class="investor-name">Turbostart</p>
+                </div>
+                <div class="investor-card">
+                    <div class="investor-logo-container">
+                        <img src="assets/images/investors/boost%20vc.webp" alt="Boost VC" loading="lazy">
+                    </div>
+                    <p class="investor-name">Boost VC</p>
+                </div>
+                <div class="investor-card">
+                    <div class="investor-logo-container">
+                        <img src="assets/images/investors/boundless%20ventures.webp" alt="Boundless Ventures" class="invert-logo" loading="lazy">
+                    </div>
+                    <p class="investor-name">Boundless Ventures</p>
+                </div>
+                <div class="investor-card">
+                    <div class="investor-logo-container">
+                        <img src="assets/images/investors/WTFund.webp" alt="WTFund" loading="lazy">
+                    </div>
+                    <p class="investor-name">WTFund</p>
+                </div>
+                <div class="investor-card">
+                    <div class="investor-logo-container">
+                        <img src="assets/images/investors/shell%20e4.webp" alt="Shell E4" loading="lazy">
+                    </div>
+                    <p class="investor-name">Shell E4</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Use Cases Section -->
+    <section class="use-cases-section">
+        <div class="section-label">
+            <span class="section-arrow">→</span>
+            <span class="section-text">USE CASES</span>
+        </div>
+
+        <div class="use-cases-wrapper">
+            <div class="use-case-item" data-speed="-300">
+                <div class="use-case-num" data-speed="-600">
+                    <span class="num-slash">/001</span>
+                    <span class="num-title">INSPECTION</span>
+                </div>
+                <div class="use-case-card">
+                    <video class="card__video" autoplay loop muted playsinline>
+                        <source src="assets/videos/use-cases/visual-4s.mp4" type="video/mp4">
+                    </video>
+                </div>
+            </div>
+
+            <div class="use-case-item" data-speed="-400">
+                <div class="use-case-num" data-speed="-600">
+                    <span class="num-slash">/002</span>
+                    <span class="num-title">PAINTING</span>
+                </div>
+                <div class="use-case-card">
+                    <video class="card__video" autoplay loop muted playsinline>
+                        <source src="assets/videos/use-cases/painting-4s.mp4" type="video/mp4">
+                    </video>
+                </div>
+            </div>
+
+            <div class="use-case-item" data-speed="-500">
+                <div class="use-case-num" data-speed="-600">
+                    <span class="num-slash">/003</span>
+                    <span class="num-title">WELDING</span>
+                </div>
+                <div class="use-case-card">
+                    <video class="card__video" autoplay loop muted playsinline>
+                        <source src="assets/videos/use-cases/welding-4s.mp4" type="video/mp4">
+                    </video>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Timeline Section -->
+    <section class="timeline-section">
+        <div class="timeline-container">
+            <div class="section-label">
+                <span class="section-arrow">→</span>
+                <span class="section-text">OUR JOURNEY</span>
+            </div>
+            <div class="timeline-wrapper">
+                <!-- Logo Box on Left -->
+                <div class="timeline-logo-box">
+                    <img src="assets/images/logo/Logo_2_white.webp" alt="Armatrix Logo" loading="lazy">
+                </div>
+
+                <!-- SVG Sine Wave Container -->
+                <svg class="timeline-wave-svg" viewBox="0 0 2640 800" preserveAspectRatio="xMidYMid meet">
+                    <!-- Thin connecting line through all rectangles -->
+                    <path class="timeline-connecting-line" d="" fill="none" />
+
+                    <!-- Wave made of rectangles -->
+                    <g class="timeline-wave-dots">
+                        <!-- Dots will be generated by JavaScript -->
+                    </g>
+
+                    <!-- Connector Lines (will be positioned by JavaScript) -->
+                    <line class="timeline-connector" data-index="0" />
+                    <line class="timeline-connector" data-index="1" />
+                    <line class="timeline-connector" data-index="2" />
+                    <line class="timeline-connector" data-index="3" />
+                    <line class="timeline-connector" data-index="4" />
+                    <line class="timeline-connector" data-index="5" />
+                    <line class="timeline-connector" data-index="6" />
+                    <line class="timeline-connector" data-index="7" />
+                    <line class="timeline-connector" data-index="8" />
+                    <line class="timeline-connector" data-index="9" />
+                    <line class="timeline-connector" data-index="10" />
+                    <line class="timeline-connector" data-index="11" />
+                </svg>
+
+                <!-- Event Cards -->
+                <div class="timeline-events-container">
+                    <!-- 2023: Foundation & Recognition -->
+                    <!-- <div class="timeline-event timeline-below" data-index="0" style="left: 100px; top: 560px;">
+                        <div class="timeline-event-content">
+                            <div class="timeline-header">
+                                <div class="timeline-header-text">
+                                    <span class="timeline-month">MAR</span>
+                                    <span class="timeline-year">2023</span>
+                                </div>
+                                <img src="assets/images/logo/arm_logo.png" alt="Armatrix" class="timeline-event-logo invert-logo" loading="lazy">
+                            </div>
+                            <h3>Inception</h3>
+                            <p>Conceptualized the idea for a <strong>flexible, snake-like robotic arm</strong> designed for <strong>inspection in heavy industries</strong></p>
+                        </div>
+                    </div> -->
+
+                    <div class="timeline-event timeline-above" data-index="0" style="left: 100px; top: 0px;">
+                        <div class="timeline-event-content">
+                            <div class="timeline-header">
+                                <div class="timeline-header-text">
+                                    <span class="timeline-month">OCT</span>
+                                    <span class="timeline-year">2023</span>
+                                </div>
+                                <svg xmlns="http://www.w3.org/2000/svg" class="timeline-event-logo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
+                            </div>
+                            <h3>Global Technical Validation</h3>
+                            <p>Awarded <strong>Best Presentation</strong> at the <strong>International Astronautical Congress (IAC)</strong> for pioneering work on <strong>control systems for hyper-redundant robotic arms</strong></p>
+                        </div>
+                    </div>
+
+                    <div class="timeline-event timeline-below" data-index="1" style="left: 200px; top: 560px;">
+                        <div class="timeline-event-content">
+                            <div class="timeline-header">
+                                <div class="timeline-header-text">
+                                    <span class="timeline-month">NOV</span>
+                                    <span class="timeline-year">2023</span>
+                                </div>
+                                <svg xmlns="http://www.w3.org/2000/svg" class="timeline-event-logo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/><path d="M12 18V6"/></svg>
+                            </div>
+                            <h3>gradCapital Fellowship</h3>
+                            <p>Received the <strong>gradCapital Atomic Fellowship ($5,000)</strong> to initiate <strong>early-stage hardware development</strong></p>
+                        </div>
+                    </div>
+
+                    <!-- 2024: Prototyping & Incorporation -->
+                    <div class="timeline-event timeline-above" data-index="2" style="left: 300px; top: 0px;">
+                        <div class="timeline-event-content">
+                            <div class="timeline-header">
+                                <div class="timeline-header-text">
+                                    <span class="timeline-month">JAN</span>
+                                    <span class="timeline-year">2024</span>
+                                </div>
+                                <img src="assets/images/logo/Logo_2_white.webp" alt="Armatrix" class="timeline-event-logo" loading="lazy">
+                            </div>
+                            <h3>Company Incorporation</h3>
+                            <p><strong>Armatrix Automations Pvt. Ltd.</strong> officially incorporated</p>
+                        </div>
+                    </div>
+
+                    <!-- <div class="timeline-event timeline-below" data-index="4" style="left: 500px; top: 560px;">
+                        <div class="timeline-event-content">
+                            <div class="timeline-header">
+                                <div class="timeline-header-text">
+                                    <span class="timeline-month">MAR</span>
+                                    <span class="timeline-year">2024</span>
+                                </div>
+                                <img src="assets/images/logo/arm_logo.png" alt="Armatrix" class="timeline-event-logo invert-logo" loading="lazy">
+                            </div>
+                            <h3>Proof of Concept (PoC)</h3>
+                            <p>Successfully completed the <strong>first functional PoC prototype</strong>, demonstrating the <strong>core mechanics of the flexible arm</strong></p>
+                        </div>
+                    </div> -->
+
+                    <div class="timeline-event timeline-below" data-index="3" style="left: 400px; top: 560px;">
+                        <div class="timeline-event-content">
+                            <div class="timeline-header">
+                                <div class="timeline-header-text">
+                                    <span class="timeline-month">JUN</span>
+                                    <span class="timeline-year">2024</span>
+                                </div>
+                                <svg xmlns="http://www.w3.org/2000/svg" class="timeline-event-logo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/><path d="M12 18V6"/></svg>
+                            </div>
+                            <h3>Strategic Funding</h3>
+                            <p>Secured funding from <strong>gradCapital Venture Capital</strong> to <strong>accelerate R&D</strong></p>
+                        </div>
+                    </div>
+
+                    <div class="timeline-event timeline-above" data-index="4" style="left: 500px; top: 0px;">
+                        <div class="timeline-event-content">
+                            <div class="timeline-header">
+                                <div class="timeline-header-text">
+                                    <span class="timeline-month">NOV</span>
+                                    <span class="timeline-year">2024</span>
+                                </div>
+                                <img src="assets/images/logo/arm_logo.png" alt="Armatrix" class="timeline-event-logo invert-logo" loading="lazy">
+                            </div>
+                            <h3>Prototype 3 (1.5m)</h3>
+                            <p>Completed development of <strong>Prototype 3, a 1.5-meter robotic arm</strong>, and received a <strong>$40,000 grant from Emergent Ventures</strong></p>
+                        </div>
+                    </div>
+
+                    <!-- 2025: Scaling & Industrial Expansion -->
+                    <div class="timeline-event timeline-below" data-index="5" style="left: 600px; top: 560px;">
+                        <div class="timeline-event-content">
+                            <div class="timeline-header">
+                                <div class="timeline-header-text">
+                                    <span class="timeline-month">MAR</span>
+                                    <span class="timeline-year">2025</span>
+                                </div>
+                                <svg xmlns="http://www.w3.org/2000/svg" class="timeline-event-logo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/><path d="M12 18V6"/></svg>
+                            </div>
+                            <h3>WTFund Grant</h3>
+                            <p>Awarded a <strong>₹20,00,000 grant</strong> from <strong>Nikhil Kamath's WTFund</strong>, supporting <strong>young entrepreneurs building disruptive tech</strong></p>
+                        </div>
+                    </div>
+
+                    <div class="timeline-event timeline-above" data-index="6" style="left: 700px; top: 0px;">
+                        <div class="timeline-event-content">
+                            <div class="timeline-header">
+                                <div class="timeline-header-text">
+                                    <span class="timeline-month">JUN</span>
+                                    <span class="timeline-year">2025</span>
+                                </div>
+                                <svg xmlns="http://www.w3.org/2000/svg" class="timeline-event-logo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/><path d="M12 18V6"/></svg>
+                            </div>
+                            <h3>Pre-Seed Round</h3>
+                            <p>Closed a <strong>$2.1 Million Pre-Seed funding</strong> round led by <strong>pi Ventures</strong> to <strong>scale engineering and operations</strong></p>
+                        </div>
+                    </div>
+
+                    <!-- <div class="timeline-event timeline-above" data-index="9" style="left: 1000px; top: 0px;">
+                        <div class="timeline-event-content">
+                            <div class="timeline-header">
+                                <div class="timeline-header-text">
+                                    <span class="timeline-month">AUG</span>
+                                    <span class="timeline-year">2025</span>
+                                </div>
+                                <svg xmlns="http://www.w3.org/2000/svg" class="timeline-event-logo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
+                            </div>
+                            <h3>Winner: Vizag Skill Sail</h3>
+                            <p>Won the <strong>Vizag Skill Sail competition</strong>, further validating the <strong>product-market fit in maritime industrial hubs</strong></p>
+                        </div>
+                    </div> -->
+
+                    <div class="timeline-event timeline-below" data-index="7" style="left: 800px; top: 560px;">
+                        <div class="timeline-event-content">
+                            <div class="timeline-header">
+                                <div class="timeline-header-text">
+                                    <span class="timeline-month">OCT</span>
+                                    <span class="timeline-year">2025</span>
+                                </div>
+                                <svg xmlns="http://www.w3.org/2000/svg" class="timeline-event-logo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
+                            </div>
+                            <h3>Shell E4 Selection</h3>
+                            <p>Selected as one of the <strong>Top 8 Indian companies</strong> by <strong>Shell E4 India</strong> for <strong>deep-track collaboration and future funding</strong></p>
+                        </div>
+                    </div>
+
+                    <div class="timeline-event timeline-above" data-index="8" style="left: 900px; top: 0px;">
+                        <div class="timeline-event-content">
+                            <div class="timeline-header">
+                                <div class="timeline-header-text">
+                                    <span class="timeline-month">NOV</span>
+                                    <span class="timeline-year">2025</span>
+                                </div>
+                                <img src="assets/images/logo/arm_logo.png" alt="Armatrix" class="timeline-event-logo invert-logo" loading="lazy">
+                            </div>
+                            <h3>MVP 01 (3m)</h3>
+                            <p>Achieved a <strong>major engineering milestone</strong> with the completion of <strong>MVP 01 - a 3-meter advanced robotic arm</strong></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Careers Section -->
+    <section id="careers" class="content-section">
+        <div class="container">
+            <div class="section-label">
+                <span class="section-arrow">→</span>
+                <span class="section-text">CAREERS</span>
+            </div>
+            <div class="section-content">
+                <p>Join us in pushing the boundaries of robotics and automation. We're looking for passionate innovators to shape the future.</p>
+                <a href="careers.html" target="_blank" rel="noopener noreferrer" class="section-cta-btn">
+                    View Open Positions
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M5 12h14M12 5l7 7-7 7"/>
+                    </svg>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Blog Section -->
+    <section id="blog" class="content-section">
+        <div class="container">
+            <div class="section-label">
+                <span class="section-arrow">→</span>
+                <span class="section-text">BLOGS</span>
+            </div>
+            <div class="section-content">
+                <p>Stories from the frontier of robotics innovation. Deep dives into technology, applications, and the future we're building.</p>
+                <a href="blog.html" target="_blank" rel="noopener noreferrer" class="section-cta-btn">
+                    Read Our Articles
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M5 12h14M12 5l7 7-7 7"/>
+                    </svg>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="contact-section">
+        <div class="container">
+            <div class="section-label">
+                <span class="section-arrow">→</span>
+                <span class="section-text">CONTACT</span>
+            </div>
+            <h1 class="contact-heading">Get in touch</h1>
+            <div class="contact-email-wrapper">
+                <p class="contact-subtext">Start a conversation</p>
+                <a href="https://armatrix.in/cdn-cgi/l/email-protection#74171b1a00151700341506191500061d0c5a1d1a" class="contact-email gradient-text"><span class="__cf_email__" data-cfemail="d2b1bdbca6b3b1a692b3a0bfb3a6a0bbaafcbbbc">[email&#160;protected]</span></a>
+            </div>
+            <div class="contact-address-wrapper">
+                <p class="contact-address-label">Our Office:</p>
+                <address class="contact-address">
+                    4th Floor, 444 Jai Tower<br>
+                    Sri Balaji Krupa Layout<br>
+                    RK Hegde Nagar<br>
+                    Bengaluru - 560077
+                </address>
+                <a href="https://maps.app.goo.gl/Kpwd1GqWbXLMFqMT7" target="_blank" rel="noopener noreferrer" class="contact-map-link">
+                    View on Map
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                    </svg>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <script data-cfasync="false" src="cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="js/utils/footer.js" data-dark="false"></script>
+
+    <script type="module" src="js/main.js"></script>
+</body>
+</html>
