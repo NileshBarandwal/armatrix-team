@@ -15,6 +15,7 @@ import {
 import TeamCard from "./components/TeamCard";
 import MemberModal from "./components/MemberModal";
 import ToastContainer, { ToastData } from "./components/Toast";
+import ParticleNetwork from "./components/ParticleNetwork";
 
 const FILTERS = ["All", "Leadership", "Engineering", "Operations"];
 
@@ -41,8 +42,10 @@ function AnimatedStat({ target, label, active }: { target: number; label: string
   const v = useCountUp(target, active);
   return (
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
-      <span className="text-3xl font-bold tracking-tight tabular-nums" style={{ color: "var(--text-primary)" }}>{v}</span>
-      <span className="text-sm ml-2" style={{ color: "var(--text-muted)" }}>{label}</span>
+      <span className="text-3xl font-bold tracking-tight tabular-nums"
+        style={{ color: "var(--text-primary)", fontFamily: "var(--font-display)", fontWeight: 300 }}>{v}</span>
+      <span className="text-sm ml-2"
+        style={{ color: "var(--text-muted)", fontFamily: "var(--font-body)" }}>{label}</span>
     </motion.div>
   );
 }
@@ -50,21 +53,23 @@ function AnimatedStat({ target, label, active }: { target: number; label: string
 function StaticStat({ value, label }: { value: string | number; label: string }) {
   return (
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.15 }}>
-      <span className="text-3xl font-bold tracking-tight" style={{ color: "var(--text-primary)" }}>{value}</span>
-      <span className="text-sm ml-2" style={{ color: "var(--text-muted)" }}>{label}</span>
+      <span className="text-3xl font-bold tracking-tight"
+        style={{ color: "var(--text-primary)", fontFamily: "var(--font-display)", fontWeight: 300 }}>{value}</span>
+      <span className="text-sm ml-2"
+        style={{ color: "var(--text-muted)", fontFamily: "var(--font-body)" }}>{label}</span>
     </motion.div>
   );
 }
 
 function Divider() {
-  return <div className="w-px h-5 self-center" style={{ background: "var(--border-hover)" }} />;
+  return <div className="w-px h-5 self-center" style={{ background: "rgba(255,255,255,0.1)" }} />;
 }
 
 
 /* ── Skeleton ── */
 function SkeletonCard() {
   return (
-    <div className="rounded-2xl p-6 animate-pulse" style={{ background: "var(--bg-raised)", border: "1px solid var(--border)" }}>
+    <div className="rounded-xl p-6 animate-pulse" style={{ background: "var(--bg-raised)", border: "1px solid var(--border)" }}>
       <div className="w-12 h-12 rounded-full mb-5" style={{ background: "var(--bg-elevated)" }} />
       <div className="space-y-2 mb-4">
         <div className="h-4 rounded w-2/3" style={{ background: "var(--bg-elevated)" }} />
@@ -214,21 +219,18 @@ export default function TeamPage() {
       animate={{ opacity: 1 }}
       transition={{ duration: 0.6 }}
     >
-      {/* Background */}
-      <div className="top-line" />
-      <div className="orb orb-1" />
-      <div className="orb orb-2" />
-      <div className="orb orb-3" />
+      {/* Particle network background */}
+      <ParticleNetwork />
 
       {/* Cursor glow */}
       <div
         ref={cursorRef}
         className="pointer-events-none fixed z-0 rounded-full hidden md:block"
         style={{
-          width: 500, height: 500,
-          background: "radial-gradient(circle, rgba(255,255,255,0.028) 0%, transparent 65%)",
+          width: 400, height: 400,
+          background: "radial-gradient(circle, rgba(255,200,100,0.03) 0%, transparent 65%)",
           transform: "translate(-50%, -50%)",
-          transition: "left 0.1s ease, top 0.1s ease",
+          transition: "left 0.12s ease, top 0.12s ease",
           top: "50%", left: "50%",
         }}
       />
@@ -236,31 +238,44 @@ export default function TeamPage() {
       {/* Nav */}
       <motion.nav
         className="sticky top-0 z-40 flex items-center justify-between"
-        style={{ borderBottom: "1px solid var(--border)", backdropFilter: "blur(16px)" }}
+        style={{ borderBottom: "1px solid rgba(255,255,255,0.06)", backdropFilter: "blur(20px)" }}
         animate={{
-          padding: scrolled ? "10px 48px" : "16px 48px",
-          background: scrolled ? "rgba(10,10,10,0.98)" : "rgba(10,10,10,0.82)",
+          padding: scrolled ? "10px 48px" : "18px 48px",
+          background: scrolled ? "rgba(0,0,0,0.98)" : "rgba(0,0,0,0.75)",
         }}
         transition={{ duration: 0.3 }}
       >
-        <a href="https://armatrix.in" className="flex items-center gap-2.5">
+        {/* Logo */}
+        <a href="https://armatrix.in" className="flex items-center gap-3" style={{ textDecoration: "none" }}>
           <motion.div
-            className="flex items-center justify-center text-xs font-bold rounded"
-            style={{ background: "var(--text-primary)", color: "var(--bg)" }}
-            animate={{ width: scrolled ? 22 : 26, height: scrolled ? 22 : 26 }}
+            className="flex items-center justify-center font-bold"
+            style={{
+              background: "linear-gradient(135deg, #ffc864 0%, #96b464 100%)",
+              color: "rgba(0,0,0,0.9)",
+              borderRadius: "6px",
+              fontFamily: "var(--font-display)",
+              fontWeight: 700,
+            }}
+            animate={{ width: scrolled ? 24 : 28, height: scrolled ? 24 : 28, fontSize: scrolled ? 12 : 14 }}
             transition={{ duration: 0.3 }}
           >A</motion.div>
-          <span className="text-sm font-semibold tracking-widest uppercase" style={{ color: "var(--text-primary)" }}>Armatrix</span>
+          <span style={{
+            fontFamily: "var(--font-display)",
+            fontWeight: 400,
+            fontSize: "1rem",
+            letterSpacing: "0.15em",
+            textTransform: "uppercase",
+            color: "var(--text-primary)",
+          }}>Armatrix</span>
         </a>
-        <div className="flex items-center gap-6">
+
+        {/* Nav links */}
+        <div className="flex items-center gap-8">
           {["Home", "Careers", "Blog", "Contact"].map((link) => (
             <a key={link}
               href={link === "Home" ? "https://armatrix.in" : `https://armatrix.in/${link.toLowerCase()}`}
               target="_blank" rel="noopener noreferrer"
-              className="hidden sm:block text-xs font-medium tracking-widest uppercase transition-colors"
-              style={{ color: "var(--text-muted)" }}
-              onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.color = "var(--text-secondary)")}
-              onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.color = "var(--text-muted)")}
+              className="nav-link hidden sm:block"
             >{link}</a>
           ))}
         </div>
@@ -268,21 +283,30 @@ export default function TeamPage() {
 
       <main className="relative z-10">
 
-        {/* Hero with mouse parallax */}
-        <div className="max-w-6xl mx-auto px-6 md:px-12 pt-20 md:pt-28 pb-16">
-          <motion.p
-            className="text-xs font-medium tracking-widest uppercase mb-6"
-            style={{ color: "var(--text-muted)" }}
+        {/* Hero */}
+        <div className="max-w-6xl mx-auto px-6 md:px-12 pt-20 md:pt-32 pb-16">
+
+          {/* Section label */}
+          <motion.div
+            className="section-label mb-8"
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.1 }}
           >
-            The team
-          </motion.p>
+            <span className="section-label-arrow">→</span>
+            <span className="section-label-text">The People</span>
+          </motion.div>
 
-          <div className="overflow-hidden mb-6" style={{ fontSize: "clamp(3rem, 8vw, 6rem)", letterSpacing: "-0.035em", lineHeight: 1.02, fontWeight: 700 }}>
+          {/* Hero heading */}
+          <div className="overflow-hidden mb-6"
+            style={{ letterSpacing: "0.02em", lineHeight: 1.05, fontFamily: "var(--font-display)", fontWeight: 300 }}>
             <motion.div
-              style={{ x: line1X, y: line1Y, color: "var(--text-primary)", display: "block" }}
+              style={{
+                x: line1X, y: line1Y,
+                color: "var(--text-primary)",
+                display: "block",
+                fontSize: "clamp(2.8rem, 7vw, 5.5rem)",
+              }}
               initial={{ opacity: 0, y: 60 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
@@ -290,8 +314,15 @@ export default function TeamPage() {
               People building
             </motion.div>
             <motion.div
-              className="shimmer-text block"
-              style={{ x: line2X, y: line2Y }}
+              style={{
+                x: line2X, y: line2Y,
+                display: "block",
+                fontSize: "clamp(2.8rem, 7vw, 5.5rem)",
+                background: "linear-gradient(135deg, #ffc864 0%, #96b464 100%)",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                backgroundClip: "text",
+              }}
               initial={{ opacity: 0, y: 60 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.28, ease: [0.16, 1, 0.3, 1] }}
@@ -302,7 +333,7 @@ export default function TeamPage() {
 
           <motion.p
             className="text-base md:text-lg max-w-lg leading-relaxed"
-            style={{ color: "var(--text-muted)", x: subtitleX }}
+            style={{ color: "var(--text-muted)", x: subtitleX, fontFamily: "var(--font-body)", fontWeight: 300 }}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
@@ -349,30 +380,40 @@ export default function TeamPage() {
               </svg>
               <input type="text" value={search} onChange={(e) => setSearch(e.target.value)}
                 placeholder="Search members..."
-                className="pl-9 pr-4 py-2 text-sm rounded-lg outline-none transition-colors w-full sm:w-48"
-                style={{ background: "var(--bg-raised)", border: "1px solid var(--border)", color: "var(--text-primary)" }}
-                onFocus={(e) => (e.currentTarget.style.borderColor = "var(--border-hover)")}
-                onBlur={(e) => (e.currentTarget.style.borderColor = "var(--border)")}
+                className="pl-9 pr-4 py-2 text-sm outline-none transition-colors w-full sm:w-48"
+                style={{
+                  background: "rgba(255,255,255,0.03)",
+                  border: "1px solid rgba(255,255,255,0.1)",
+                  color: "var(--text-primary)",
+                  borderRadius: "8px",
+                  fontFamily: "var(--font-body)",
+                }}
+                onFocus={(e) => (e.currentTarget.style.borderColor = "rgba(255,200,100,0.4)")}
+                onBlur={(e) => (e.currentTarget.style.borderColor = "rgba(255,255,255,0.1)")}
               />
             </div>
 
             {/* Filters */}
-            <div className="flex gap-1 p-1 rounded-lg" style={{ background: "var(--bg-raised)", border: "1px solid var(--border)" }}>
+            <div className="flex gap-1 p-1 rounded-lg"
+              style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.08)" }}>
               {FILTERS.map((f) => {
                 const count = f === "All" ? members.length : members.filter((m) => m.department === f).length;
                 const active = filter === f;
                 return (
                   <button key={f} onClick={() => { setFilter(f); setSearch(""); }}
-                    className="px-3 py-1.5 rounded-md text-sm transition-all duration-200"
+                    className="px-3 py-1.5 text-sm transition-all duration-200"
                     style={{
-                      background: active ? "rgba(59,130,246,0.1)" : "transparent",
-                      color: active ? "var(--accent)" : "var(--text-muted)",
-                      border: active ? "1px solid rgba(59,130,246,0.28)" : "1px solid transparent",
+                      borderRadius: "6px",
+                      background: active ? "rgba(255,200,100,0.1)" : "transparent",
+                      color: active ? "#ffc864" : "var(--text-muted)",
+                      border: active ? "1px solid rgba(255,200,100,0.25)" : "1px solid transparent",
                       fontWeight: active ? 500 : 400,
+                      fontFamily: "var(--font-body)",
                     }}>
                     {f}
                     {count > 0 && (
-                      <span className="ml-1.5 text-xs" style={{ color: active ? "rgba(59,130,246,0.65)" : "var(--text-muted)" }}>{count}</span>
+                      <span className="ml-1.5 text-xs"
+                        style={{ color: active ? "rgba(255,200,100,0.6)" : "var(--text-muted)" }}>{count}</span>
                     )}
                   </button>
                 );
@@ -382,9 +423,16 @@ export default function TeamPage() {
             {/* Add member */}
             <motion.button
               onClick={() => { setEditTarget(null); setModalOpen(true); }}
-              className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap ml-auto"
-              style={{ background: "var(--btn-primary-bg)", color: "var(--btn-primary-text)" }}
-              whileHover={{ scale: 1.03, opacity: 0.92 }}
+              className="flex items-center gap-2 px-4 py-2 text-sm font-medium whitespace-nowrap ml-auto"
+              style={{
+                background: "linear-gradient(135deg, #ffc864 0%, #96b464 100%)",
+                color: "rgba(0,0,0,0.9)",
+                borderRadius: "8px",
+                border: "1px solid rgba(0,0,0,0.2)",
+                fontFamily: "var(--font-body)",
+                fontWeight: 500,
+              }}
+              whileHover={{ translateY: -2, boxShadow: "0 8px 30px rgba(255,200,100,0.25)" }}
               whileTap={{ scale: 0.97 }}
             >
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
@@ -406,12 +454,18 @@ export default function TeamPage() {
                 animate={{ opacity: slowLoad ? 1 : 0 }}
                 transition={{ duration: 0.5 }}
               >
-                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs"
-                  style={{ background: "rgba(59,130,246,0.08)", border: "1px solid rgba(59,130,246,0.2)", color: "var(--text-muted)" }}>
+                <div className="inline-flex items-center gap-2 px-4 py-2 text-xs"
+                  style={{
+                    background: "rgba(255,200,100,0.05)",
+                    border: "1px solid rgba(255,200,100,0.15)",
+                    color: "var(--text-muted)",
+                    borderRadius: "8px",
+                    fontFamily: "var(--font-body)",
+                  }}>
                   <span className="relative flex h-2 w-2">
                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75"
-                      style={{ background: "var(--accent)" }} />
-                    <span className="relative inline-flex rounded-full h-2 w-2" style={{ background: "var(--accent)" }} />
+                      style={{ background: "#ffc864" }} />
+                    <span className="relative inline-flex rounded-full h-2 w-2" style={{ background: "#ffc864" }} />
                   </span>
                   Backend is waking up — this takes up to 30s on first visit
                 </div>
@@ -422,22 +476,36 @@ export default function TeamPage() {
           {/* Error */}
           {!loading && error && (
             <motion.div className="py-24 text-center" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-              <div className="inline-flex flex-col items-center gap-4 px-8 py-6 rounded-2xl"
-                style={{ background: "var(--bg-raised)", border: "1px solid var(--border)" }}>
+              <div className="inline-flex flex-col items-center gap-4 px-8 py-6"
+                style={{ background: "var(--bg-raised)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: "12px" }}>
                 <div className="w-10 h-10 rounded-full flex items-center justify-center"
-                  style={{ background: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.2)" }}>
+                  style={{ background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.15)" }}>
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#f87171" strokeWidth="2" strokeLinecap="round">
                     <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
                   </svg>
                 </div>
                 <div>
-                  <p className="text-sm font-medium mb-1" style={{ color: "var(--text-primary)" }}>Could not reach the backend</p>
-                  <p className="text-xs" style={{ color: "var(--text-muted)" }}>The server may still be waking up. Try again in a moment.</p>
+                  <p className="text-sm font-medium mb-1" style={{ color: "var(--text-primary)", fontFamily: "var(--font-body)" }}>Could not reach the backend</p>
+                  <p className="text-xs" style={{ color: "var(--text-muted)", fontFamily: "var(--font-body)" }}>The server may still be waking up. Try again in a moment.</p>
                 </div>
                 <button
                   onClick={() => { setError(""); setLoading(true); fetchTeam(); }}
-                  className="px-4 py-2 rounded-lg text-sm font-medium transition-opacity hover:opacity-80"
-                  style={{ background: "var(--btn-primary-bg)", color: "var(--btn-primary-text)" }}
+                  className="px-4 py-2 text-sm font-medium transition-all"
+                  style={{
+                    background: "linear-gradient(135deg, #ffc864 0%, #96b464 100%)",
+                    color: "rgba(0,0,0,0.9)",
+                    borderRadius: "8px",
+                    border: "1px solid rgba(0,0,0,0.2)",
+                    fontFamily: "var(--font-body)",
+                  }}
+                  onMouseEnter={(e) => {
+                    (e.currentTarget as HTMLElement).style.transform = "translateY(-1px)";
+                    (e.currentTarget as HTMLElement).style.boxShadow = "0 8px 24px rgba(255,200,100,0.2)";
+                  }}
+                  onMouseLeave={(e) => {
+                    (e.currentTarget as HTMLElement).style.transform = "translateY(0)";
+                    (e.currentTarget as HTMLElement).style.boxShadow = "none";
+                  }}
                 >
                   Retry
                 </button>
@@ -448,7 +516,7 @@ export default function TeamPage() {
           {/* Empty */}
           {!loading && !error && filtered.length === 0 && (
             <motion.div className="py-24 text-center" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-              <p className="text-sm" style={{ color: "var(--text-muted)" }}>
+              <p className="text-sm" style={{ color: "var(--text-muted)", fontFamily: "var(--font-body)" }}>
                 {search ? `No results for "${search}"` : `No members in ${filter} yet.`}
               </p>
               {!search && (
@@ -494,24 +562,37 @@ export default function TeamPage() {
         {deleteId && (
           <motion.div
             className="fixed inset-0 z-50 flex items-center justify-center p-4"
-            style={{ background: "rgba(0,0,0,0.88)", backdropFilter: "blur(8px)" }}
+            style={{ background: "rgba(0,0,0,0.9)", backdropFilter: "blur(8px)" }}
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
           >
             <motion.div
-              className="w-full max-w-sm rounded-2xl p-6"
-              style={{ background: "var(--bg-raised)", border: "1px solid var(--border-hover)" }}
+              className="w-full max-w-sm p-6"
+              style={{ background: "#0a0a0a", border: "1px solid rgba(255,255,255,0.12)", borderRadius: "12px" }}
               initial={{ opacity: 0, y: 20, scale: 0.97 }}
               animate={{ opacity: 1, y: 0,  scale: 1 }}
               exit={{ opacity: 0, y: 10, scale: 0.97 }}
               transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
             >
-              <h3 className="text-base font-semibold mb-2" style={{ color: "var(--text-primary)" }}>Remove member?</h3>
-              <p className="text-sm mb-6" style={{ color: "var(--text-muted)" }}>This action cannot be undone.</p>
+              <h3 className="text-base font-semibold mb-2"
+                style={{ color: "var(--text-primary)", fontFamily: "var(--font-display)", fontWeight: 500 }}>Remove member?</h3>
+              <p className="text-sm mb-6"
+                style={{ color: "var(--text-muted)", fontFamily: "var(--font-body)" }}>This action cannot be undone.</p>
               <div className="flex gap-3">
-                <button onClick={() => setDeleteId(null)} className="flex-1 py-2.5 rounded-xl text-sm font-medium"
-                  style={{ color: "var(--text-secondary)", border: "1px solid var(--border)" }}>Cancel</button>
-                <button onClick={confirmDelete} className="flex-1 py-2.5 rounded-xl text-sm font-semibold hover:opacity-90 transition-opacity"
-                  style={{ background: "#ef4444", color: "#fff" }}>Remove</button>
+                <button onClick={() => setDeleteId(null)}
+                  className="flex-1 py-2.5 text-sm font-medium transition-colors"
+                  style={{
+                    color: "var(--text-secondary)",
+                    border: "1px solid rgba(255,255,255,0.1)",
+                    borderRadius: "8px",
+                    fontFamily: "var(--font-body)",
+                  }}
+                  onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.borderColor = "rgba(255,255,255,0.2)")}
+                  onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.borderColor = "rgba(255,255,255,0.1)")}
+                >Cancel</button>
+                <button onClick={confirmDelete}
+                  className="flex-1 py-2.5 text-sm font-semibold transition-opacity hover:opacity-90"
+                  style={{ background: "#ef4444", color: "#fff", borderRadius: "8px", fontFamily: "var(--font-body)" }}
+                >Remove</button>
               </div>
             </motion.div>
           </motion.div>
