@@ -101,6 +101,190 @@ body::after {
   overflow: hidden;
 }
 
+/* ── Responsive tweaks for team page ── */
+.team-page {
+  overflow-x: hidden;
+}
+.team-nav-logo img {
+  display: block;
+  height: 56px;
+  width: auto;
+}
+.team-mobile-button {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  width: 42px;
+  height: 36px;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 10px;
+  background: rgba(255,255,255,0.03);
+  cursor: pointer;
+  transition: border-color 0.3s ease, background 0.3s ease;
+}
+.team-mobile-button span {
+  display: block;
+  width: 18px;
+  height: 2px;
+  background: var(--text-primary);
+  border-radius: 999px;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+.team-mobile-button.open span:nth-child(1) {
+  transform: translateY(3px) rotate(45deg);
+}
+.team-mobile-button.open span:nth-child(2) {
+  opacity: 0;
+}
+.team-mobile-button.open span:nth-child(3) {
+  transform: translateY(-3px) rotate(-45deg);
+}
+
+.team-mobile-menu {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.85);
+  backdrop-filter: blur(20px);
+  z-index: 50;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.35s ease;
+}
+.team-mobile-menu.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+.team-mobile-menu-inner {
+  width: min(90vw, 360px);
+  margin: 0 auto;
+  padding: 2rem 1.5rem 3rem;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  gap: 2rem;
+}
+.team-mobile-menu-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.team-mobile-menu-header img {
+  height: 48px;
+  width: auto;
+}
+.team-mobile-close {
+  position: relative;
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.15);
+  background: rgba(255,255,255,0.05);
+  cursor: pointer;
+}
+.team-mobile-close span {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 18px;
+  height: 2px;
+  background: var(--text-primary);
+  transform-origin: center;
+}
+.team-mobile-close span:first-child {
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+.team-mobile-close span:last-child {
+  transform: translate(-50%, -50%) rotate(-45deg);
+}
+.team-mobile-links {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+.team-mobile-links a {
+  font-size: 1.25rem;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--text-primary);
+  text-decoration: none;
+  font-family: var(--font-display);
+}
+
+@media (max-width: 900px) {
+  .team-nav {
+    padding: 16px 32px !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .team-nav {
+    padding: 14px 20px !important;
+    justify-content: space-between !important;
+    background: rgba(0,0,0,0.95) !important;
+    border-bottom: 1px solid rgba(255,255,255,0.08) !important;
+  }
+  .team-nav-logo img {
+    height: 48px !important;
+  }
+  .team-nav-links {
+    display: none;
+  }
+  .team-mobile-button {
+    display: flex;
+  }
+}
+
+@media (max-width: 640px) {
+  .team-hero {
+    text-align: center;
+    padding-top: 6rem !important;
+    padding-bottom: 3rem !important;
+  }
+  .team-hero .section-label {
+    justify-content: center;
+    margin-bottom: 1rem;
+  }
+  .team-hero p {
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .team-controls {
+    align-items: stretch !important;
+  }
+  .team-controls > * {
+    width: 100%;
+  }
+  .team-controls .team-filter-row {
+    margin-top: 0.5rem;
+  }
+  .team-filter-row {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .team-filter-row button {
+    flex: 1 1 calc(50% - 8px);
+    min-width: 130px;
+    text-align: center;
+  }
+  .team-contact {
+    text-align: center;
+  }
+  .team-contact .section-label {
+    justify-content: center;
+  }
+  .team-contact address {
+    font-size: 1rem !important;
+  }
+  .team-contact .contact-map-link {
+    justify-content: center;
+  }
+  .team-mobile-menu-inner {
+    width: 100%;
+  }
+}
+
 /* ── Gold gradient text ── */
 .gold-text {
   background: linear-gradient(135deg, #ffc864 0%, #96b464 100%);

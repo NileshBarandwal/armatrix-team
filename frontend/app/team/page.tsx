@@ -22,6 +22,12 @@ import PageLoader from "./components/PageLoader";
 const ParticleNetwork = dynamic(() => import("./components/ParticleNetwork"), { ssr: false });
 
 const FILTERS = ["All", "Leadership", "Engineering", "Operations"];
+const NAV_LINKS = [
+  { label: "Home", href: "https://armatrix.in", external: true },
+  { label: "Careers", href: "https://armatrix.in/careers", external: true },
+  { label: "Blog", href: "https://armatrix.in/blog", external: true },
+  { label: "Contact", href: "#contact", external: false },
+];
 
 
 /* ── Count-up ── */
@@ -103,6 +109,7 @@ export default function TeamPage() {
   const [scrolled, setScrolled]   = useState(false);
   const [slowLoad, setSlowLoad]   = useState(false);
   const [showLoader, setShowLoader] = useState(true);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const cursorRef    = useRef<HTMLDivElement>(null);   // large glow
   const cursorRingRef = useRef<HTMLDivElement>(null);  // trailing ring
@@ -190,6 +197,17 @@ export default function TeamPage() {
     return () => clearTimeout(t);
   }, [loading]);
 
+  useEffect(() => {
+    if (mobileMenuOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [mobileMenuOpen]);
+
   /* Scroll reveals */
   useEffect(() => {
     const els = document.querySelectorAll(".reveal");
@@ -255,7 +273,7 @@ export default function TeamPage() {
 
   return (
     <motion.div
-      className="min-h-screen relative"
+      className="team-page min-h-screen relative"
       style={{ background: "var(--bg)" }}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
@@ -312,7 +330,7 @@ export default function TeamPage() {
 
       {/* Nav — fixed transparent overlay, darkens on scroll */}
       <motion.nav
-        className="fixed top-0 left-0 right-0 z-40 flex items-center justify-between"
+        className="team-nav fixed top-0 left-0 right-0 z-40 flex items-center justify-between"
         animate={{
           padding: scrolled ? "10px 48px" : "20px 48px",
           background: scrolled ? "rgba(0,0,0,0.92)" : "transparent",
@@ -322,7 +340,7 @@ export default function TeamPage() {
         transition={{ duration: 0.35 }}
       >
         {/* Logo */}
-        <a href="https://armatrix.in" className="flex items-center" style={{ textDecoration: "none" }}>
+        <a href="https://armatrix.in" className="team-nav-logo flex items-center" style={{ textDecoration: "none" }}>
           <motion.img
             // eslint-disable-next-line @next/next/no-img-element
             src="/logo.webp"
@@ -334,21 +352,67 @@ export default function TeamPage() {
         </a>
 
         {/* Nav links with underline slide */}
-        <div className="flex items-center gap-8">
-          {["Home", "Careers", "Blog", "Contact"].map((link) => (
-            <a key={link}
-              href={link === "Home" ? "https://armatrix.in" : `https://armatrix.in/${link.toLowerCase()}`}
-              target="_blank" rel="noopener noreferrer"
+        <div className="team-nav-links flex items-center gap-8">
+          {NAV_LINKS.map(({ label, href, external }) => (
+            <a
+              key={label}
+              href={href}
+              target={external ? "_blank" : undefined}
+              rel={external ? "noopener noreferrer" : undefined}
               className="nav-link hidden sm:block"
-            >{link}</a>
+            >
+              {label}
+            </a>
           ))}
         </div>
+        <button
+          className={`team-mobile-button ${mobileMenuOpen ? "open" : ""}`}
+          onClick={() => setMobileMenuOpen(true)}
+          aria-label="Open navigation menu"
+        >
+          <span />
+          <span />
+          <span />
+        </button>
       </motion.nav>
+
+      <div
+        className={`team-mobile-menu ${mobileMenuOpen ? "open" : ""}`}
+        onClick={(e) => e.target === e.currentTarget && setMobileMenuOpen(false)}
+      >
+        <div className="team-mobile-menu-inner">
+          <div className="team-mobile-menu-header">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/logo.webp" alt="Armatrix" height={48} width={120} />
+            <button
+              className="team-mobile-close"
+              onClick={() => setMobileMenuOpen(false)}
+              aria-label="Close navigation menu"
+            >
+              <span />
+              <span />
+            </button>
+          </div>
+          <div className="team-mobile-links">
+            {NAV_LINKS.map(({ label, href, external }) => (
+              <a
+                key={`${label}-mobile`}
+                href={href}
+                target={external ? "_blank" : undefined}
+                rel={external ? "noopener noreferrer" : undefined}
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                {label}
+              </a>
+            ))}
+          </div>
+        </div>
+      </div>
 
       <main className="relative z-10">
 
         {/* Hero — extra top padding to clear fixed nav */}
-        <div className="max-w-6xl mx-auto px-6 md:px-12 pt-32 md:pt-44 pb-16">
+        <div className="team-hero max-w-6xl mx-auto px-6 md:px-12 pt-32 md:pt-44 pb-16">
 
           {/* Section label */}
           <motion.div
@@ -430,13 +494,13 @@ export default function TeamPage() {
 
           {/* Controls */}
           <motion.div
-            className="flex flex-col sm:flex-row sm:items-center gap-3 mb-10"
+            className="team-controls flex flex-col sm:flex-row sm:items-center gap-3 mb-10"
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.5 }}
           >
             {/* Search */}
-            <div className="relative">
+            <div className="relative w-full sm:w-auto">
               <svg className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" width="14" height="14"
                 viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"
                 style={{ color: "var(--text-muted)" }}>
@@ -458,7 +522,7 @@ export default function TeamPage() {
             </div>
 
             {/* Filters */}
-            <div className="flex gap-1 p-1 rounded-lg"
+            <div className="team-filter-row flex gap-1 p-1 rounded-lg"
               style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.08)" }}>
               {FILTERS.map((f) => {
                 const count = f === "All" ? members.length : members.filter((m) => m.department === f).length;
@@ -619,7 +683,7 @@ export default function TeamPage() {
 
       <section
         id="contact"
-        className="relative z-10 px-6 md:px-12 pt-20 pb-12"
+        className="team-contact relative z-10 px-6 md:px-12 pt-20 pb-12"
         style={{ borderTop: "1px solid rgba(255,255,255,0.08)", background: "var(--bg)" }}
       >
         <div className="max-w-5xl mx-auto">
