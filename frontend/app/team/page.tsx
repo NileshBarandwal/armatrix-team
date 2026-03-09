@@ -92,6 +92,7 @@ export default function TeamPage() {
   const [toasts, setToasts]       = useState<ToastData[]>([]);
   const [statsVisible, setStatsVisible] = useState(false);
   const [scrolled, setScrolled]   = useState(false);
+  const [slowLoad, setSlowLoad]   = useState(false);
 
   const cursorRef = useRef<HTMLDivElement>(null);
   const toastId   = useRef(0);
@@ -134,6 +135,13 @@ export default function TeamPage() {
       return () => clearTimeout(t);
     }
   }, [loading, members.length]);
+
+  /* Show "waking up" hint after 5s of loading (Railway cold start) */
+  useEffect(() => {
+    if (!loading) { setSlowLoad(false); return; }
+    const t = setTimeout(() => setSlowLoad(true), 5000);
+    return () => clearTimeout(t);
+  }, [loading]);
 
   /* Scroll reveals */
   useEffect(() => {
@@ -388,18 +396,52 @@ export default function TeamPage() {
 
           {/* Loading */}
           {loading && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {Array.from({ length: 6 }).map((_, i) => <SkeletonCard key={i} />)}
+            <div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {Array.from({ length: 6 }).map((_, i) => <SkeletonCard key={i} />)}
+              </div>
+              <motion.div
+                className="mt-8 text-center"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: slowLoad ? 1 : 0 }}
+                transition={{ duration: 0.5 }}
+              >
+                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs"
+                  style={{ background: "rgba(59,130,246,0.08)", border: "1px solid rgba(59,130,246,0.2)", color: "var(--text-muted)" }}>
+                  <span className="relative flex h-2 w-2">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75"
+                      style={{ background: "var(--accent)" }} />
+                    <span className="relative inline-flex rounded-full h-2 w-2" style={{ background: "var(--accent)" }} />
+                  </span>
+                  Backend is waking up — this takes up to 30s on first visit
+                </div>
+              </motion.div>
             </div>
           )}
 
           {/* Error */}
           {!loading && error && (
             <motion.div className="py-24 text-center" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-              <p className="text-sm mb-3" style={{ color: "#f87171" }}>{error}</p>
-              <button onClick={() => { setError(""); setLoading(true); fetchTeam(); }} className="text-xs underline" style={{ color: "var(--text-secondary)" }}>
-                Try again
-              </button>
+              <div className="inline-flex flex-col items-center gap-4 px-8 py-6 rounded-2xl"
+                style={{ background: "var(--bg-raised)", border: "1px solid var(--border)" }}>
+                <div className="w-10 h-10 rounded-full flex items-center justify-center"
+                  style={{ background: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.2)" }}>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#f87171" strokeWidth="2" strokeLinecap="round">
+                    <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+                  </svg>
+                </div>
+                <div>
+                  <p className="text-sm font-medium mb-1" style={{ color: "var(--text-primary)" }}>Could not reach the backend</p>
+                  <p className="text-xs" style={{ color: "var(--text-muted)" }}>The server may still be waking up. Try again in a moment.</p>
+                </div>
+                <button
+                  onClick={() => { setError(""); setLoading(true); fetchTeam(); }}
+                  className="px-4 py-2 rounded-lg text-sm font-medium transition-opacity hover:opacity-80"
+                  style={{ background: "var(--btn-primary-bg)", color: "var(--btn-primary-text)" }}
+                >
+                  Retry
+                </button>
+              </div>
             </motion.div>
           )}
 
