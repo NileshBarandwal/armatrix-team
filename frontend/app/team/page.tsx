@@ -363,7 +363,7 @@ export default function TeamPage() {
 
           {/* Hero heading */}
           <div className="overflow-hidden mb-6"
-            style={{ letterSpacing: "0.02em", lineHeight: 1.05, fontFamily: "var(--font-display)", fontWeight: 300 }}>
+            style={{ letterSpacing: "0.02em", lineHeight: 1.05, fontFamily: "var(--font-display)", fontWeight: 600 }}>
             <motion.div
               style={{
                 x: line1X, y: line1Y,
@@ -378,14 +378,11 @@ export default function TeamPage() {
               People building
             </motion.div>
             <motion.div
+              className="gradient-flow"
               style={{
                 x: line2X, y: line2Y,
                 display: "block",
                 fontSize: "clamp(2.8rem, 7vw, 5.5rem)",
-                background: "linear-gradient(135deg, #ffc864 0%, #96b464 100%)",
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent",
-                backgroundClip: "text",
               }}
               initial={{ opacity: 0, y: 60 }}
               animate={{ opacity: 1, y: 0 }}
