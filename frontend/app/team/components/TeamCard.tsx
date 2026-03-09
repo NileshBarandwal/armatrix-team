@@ -1,5 +1,6 @@
 "use client";
 
+import { useRef } from "react";
 import { TeamMember } from "@/lib/api";
 
 interface Props {
@@ -10,6 +11,8 @@ interface Props {
 }
 
 export default function TeamCard({ member, index, onEdit, onDelete }: Props) {
+  const cardRef = useRef<HTMLDivElement>(null);
+
   const initials = member.name
     .split(" ")
     .map((n) => n[0])
@@ -17,23 +20,44 @@ export default function TeamCard({ member, index, onEdit, onDelete }: Props) {
     .slice(0, 2)
     .toUpperCase();
 
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const card = cardRef.current;
+    if (!card) return;
+    const rect = card.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    const cx = rect.width / 2;
+    const cy = rect.height / 2;
+    const rotX = ((y - cy) / cy) * -6;
+    const rotY = ((x - cx) / cx) * 6;
+    card.style.transform = `perspective(700px) rotateX(${rotX}deg) rotateY(${rotY}deg) translateY(-3px)`;
+    card.style.borderColor = "var(--border-hover)";
+  };
+
+  const handleMouseLeave = () => {
+    const card = cardRef.current;
+    if (!card) return;
+    card.style.transform = "perspective(700px) rotateX(0deg) rotateY(0deg) translateY(0)";
+    card.style.borderColor = "var(--border)";
+  };
+
   return (
     <div
-      className="card-animate group relative flex flex-col rounded-2xl p-6 transition-all duration-300 hover:-translate-y-0.5"
+      ref={cardRef}
+      className="card-animate card-shimmer group relative flex flex-col rounded-2xl p-6"
       style={{
         background: "var(--bg-raised)",
         border: "1px solid var(--border)",
-        animationDelay: `${index * 50}ms`,
+        animationDelay: `${index * 60}ms`,
+        transition: "transform 0.15s ease, border-color 0.2s ease, box-shadow 0.2s ease",
+        willChange: "transform",
+        transformStyle: "preserve-3d",
       }}
-      onMouseEnter={(e) => {
-        (e.currentTarget as HTMLDivElement).style.borderColor = "var(--border-hover)";
-      }}
-      onMouseLeave={(e) => {
-        (e.currentTarget as HTMLDivElement).style.borderColor = "var(--border)";
-      }}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
     >
-      {/* Action buttons — appear on hover */}
-      <div className="absolute top-4 right-4 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-150">
+      {/* Edit / Delete — fade in on hover */}
+      <div className="absolute top-4 right-4 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
         <button
           onClick={() => onEdit(member)}
           title="Edit"
@@ -80,52 +104,35 @@ export default function TeamCard({ member, index, onEdit, onDelete }: Props) {
         )}
       </div>
 
-      {/* Name + Role */}
-      <div className="mb-1">
-        <h3
-          className="font-semibold text-base leading-snug"
-          style={{ color: "var(--text-primary)" }}
-        >
-          {member.name}
-        </h3>
-      </div>
-      <p
-        className="text-sm mb-1"
-        style={{ color: "var(--text-secondary)" }}
-      >
+      {/* Info */}
+      <h3 className="font-semibold text-base leading-snug mb-0.5" style={{ color: "var(--text-primary)" }}>
+        {member.name}
+      </h3>
+      <p className="text-sm mb-0.5" style={{ color: "var(--text-secondary)" }}>
         {member.role}
       </p>
-      <p
-        className="text-xs mb-4"
-        style={{ color: "var(--text-muted)" }}
-      >
+      <p className="text-xs mb-4" style={{ color: "var(--text-muted)" }}>
         {member.department}
       </p>
 
       {/* Bio */}
-      <p
-        className="text-sm leading-relaxed line-clamp-3 flex-1"
-        style={{ color: "var(--text-muted)" }}
-      >
+      <p className="text-sm leading-relaxed line-clamp-3 flex-1" style={{ color: "var(--text-muted)" }}>
         {member.bio}
       </p>
 
       {/* Social links */}
       {(member.linkedin_url || member.github_url) && (
-        <div
-          className="flex gap-3 mt-5 pt-4"
-          style={{ borderTop: "1px solid var(--border)" }}
-        >
+        <div className="flex gap-3 mt-5 pt-4" style={{ borderTop: "1px solid var(--border)" }}>
           {member.linkedin_url && (
             <a
               href={member.linkedin_url}
               target="_blank"
               rel="noopener noreferrer"
               title="LinkedIn"
+              className="transition-colors"
               style={{ color: "var(--text-muted)" }}
               onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.color = "var(--text-primary)")}
               onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.color = "var(--text-muted)")}
-              className="transition-colors"
             >
               <LinkedInIcon />
             </a>
@@ -136,10 +143,10 @@ export default function TeamCard({ member, index, onEdit, onDelete }: Props) {
               target="_blank"
               rel="noopener noreferrer"
               title="GitHub"
+              className="transition-colors"
               style={{ color: "var(--text-muted)" }}
               onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.color = "var(--text-primary)")}
               onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.color = "var(--text-muted)")}
-              className="transition-colors"
             >
               <GitHubIcon />
             </a>

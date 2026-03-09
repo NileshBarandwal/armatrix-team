@@ -3,10 +3,8 @@
 A team directory page that doesn't exist on armatrix.in yet. Browse the people behind the company, filter by department, and manage members (add, edit, delete) through a clean UI backed by a REST API.
 
 **Frontend:** [https://armatrix-team.vercel.app/team](https://armatrix-team.vercel.app/team)
-**Backend API:** [https://armatrix-team-api.onrender.com](https://armatrix-team-api.onrender.com)
-**API Docs:** [https://armatrix-team-api.onrender.com/docs](https://armatrix-team-api.onrender.com/docs)
-
-> The backend is on Render's free tier and spins down after 15 minutes of inactivity. The first request may take ~30 seconds — just reload if it hangs.
+**Backend API:** [https://armatrix-team-api.up.railway.app](https://armatrix-team-api.up.railway.app)
+**API Docs:** [https://armatrix-team-api.up.railway.app/docs](https://armatrix-team-api.up.railway.app/docs)
 
 ---
 
