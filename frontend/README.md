@@ -1,5 +1,11 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+## Live Links
+
+- Frontend: [https://armatrix-team-6pz4.vercel.app/team](https://armatrix-team-6pz4.vercel.app/team)
+- Backend Docs: [https://armatrix-team-api.up.railway.app/docs](https://armatrix-team-api.up.railway.app/docs)
+- Backend: [https://armatrix-team-api.up.railway.app/team](https://armatrix-team-api.up.railway.app/team)
+
 ## Getting Started
 
 First, run the development server:
