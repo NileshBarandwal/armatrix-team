@@ -11,7 +11,7 @@ interface Particle {
 }
 
 const NUM_PARTICLES = 48;
-const MAX_DIST      = 140;
+const MAX_DIST      = 150;
 
 export default function ParticleNetwork() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -38,7 +38,7 @@ export default function ParticleNetwork() {
         y:    Math.random() * window.innerHeight,
         vx:   (Math.random() - 0.5) * 0.28,
         vy:   (Math.random() - 0.5) * 0.28,
-        size: Math.random() * 1.2 + 0.4,
+        size: Math.random() * 2.5 + 1.5,
       });
     }
 
@@ -62,8 +62,8 @@ export default function ParticleNetwork() {
             ctx.beginPath();
             ctx.moveTo(particles[i].x, particles[i].y);
             ctx.lineTo(particles[j].x, particles[j].y);
-            ctx.strokeStyle = `rgba(255, 200, 100, ${alpha})`;
-            ctx.lineWidth   = 0.6;
+            ctx.strokeStyle = `rgba(255, 200, 100, ${alpha * 1.6})`;
+            ctx.lineWidth   = 0.8;
             ctx.stroke();
           }
         }
@@ -72,7 +72,7 @@ export default function ParticleNetwork() {
       for (const p of particles) {
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-        ctx.fillStyle = "rgba(255, 200, 100, 0.35)";
+        ctx.fillStyle = "rgba(255, 200, 100, 0.75)";
         ctx.fill();
       }
 
@@ -91,7 +91,7 @@ export default function ParticleNetwork() {
     <canvas
       ref={canvasRef}
       className="fixed inset-0 pointer-events-none"
-      style={{ zIndex: 0, opacity: 0.55 }}
+      style={{ zIndex: 0, opacity: 0.75 }}
     />
   );
 }

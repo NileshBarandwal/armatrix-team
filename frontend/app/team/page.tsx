@@ -12,10 +12,14 @@ import {
   createMember, deleteMember, getTeam,
   TeamMember, TeamMemberInput, updateMember,
 } from "@/lib/api";
+import dynamic from "next/dynamic";
 import TeamCard from "./components/TeamCard";
 import MemberModal from "./components/MemberModal";
 import ToastContainer, { ToastData } from "./components/Toast";
-import ParticleNetwork from "./components/ParticleNetwork";
+import PageLoader from "./components/PageLoader";
+
+// Canvas uses browser APIs — must be client-only, no SSR
+const ParticleNetwork = dynamic(() => import("./components/ParticleNetwork"), { ssr: false });
 
 const FILTERS = ["All", "Leadership", "Engineering", "Operations"];
 
@@ -98,9 +102,14 @@ export default function TeamPage() {
   const [statsVisible, setStatsVisible] = useState(false);
   const [scrolled, setScrolled]   = useState(false);
   const [slowLoad, setSlowLoad]   = useState(false);
+  const [showLoader, setShowLoader] = useState(true);
 
-  const cursorRef = useRef<HTMLDivElement>(null);
-  const toastId   = useRef(0);
+  const cursorRef    = useRef<HTMLDivElement>(null);   // large glow
+  const cursorRingRef = useRef<HTMLDivElement>(null);  // trailing ring
+  const cursorDotRef  = useRef<HTMLDivElement>(null);  // exact dot
+  const mousePos     = useRef({ x: -400, y: -400 });
+  const ringPos      = useRef({ x: -400, y: -400 });
+  const toastId      = useRef(0);
 
   /* Mouse parallax for hero */
   const rawX = useMotionValue(0);
@@ -114,16 +123,42 @@ export default function TeamPage() {
   const subtitleX = useTransform(springX, [-1, 1], [-5,  5]);
 
   useEffect(() => {
+    const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
+    let animId: number;
+
     const onMove = (e: MouseEvent) => {
-      rawX.set((e.clientX / window.innerWidth)  * 2 - 1);
-      rawY.set((e.clientY / window.innerHeight) * 2 - 1);
+      const x = e.clientX, y = e.clientY;
+      rawX.set((x / window.innerWidth)  * 2 - 1);
+      rawY.set((y / window.innerHeight) * 2 - 1);
+      mousePos.current = { x, y };
+      // Glow + dot follow instantly
       if (cursorRef.current) {
-        cursorRef.current.style.left = e.clientX + "px";
-        cursorRef.current.style.top  = e.clientY + "px";
+        cursorRef.current.style.left = x + "px";
+        cursorRef.current.style.top  = y + "px";
+      }
+      if (cursorDotRef.current) {
+        cursorDotRef.current.style.left = x + "px";
+        cursorDotRef.current.style.top  = y + "px";
       }
     };
+
+    // Ring lerps toward cursor each frame — creates organic trailing lag
+    const tick = () => {
+      ringPos.current.x = lerp(ringPos.current.x, mousePos.current.x, 0.1);
+      ringPos.current.y = lerp(ringPos.current.y, mousePos.current.y, 0.1);
+      if (cursorRingRef.current) {
+        cursorRingRef.current.style.left = ringPos.current.x + "px";
+        cursorRingRef.current.style.top  = ringPos.current.y + "px";
+      }
+      animId = requestAnimationFrame(tick);
+    };
+
     window.addEventListener("mousemove", onMove);
-    return () => window.removeEventListener("mousemove", onMove);
+    animId = requestAnimationFrame(tick);
+    return () => {
+      window.removeEventListener("mousemove", onMove);
+      cancelAnimationFrame(animId);
+    };
   }, [rawX, rawY]);
 
   /* Nav shrink */
@@ -145,6 +180,13 @@ export default function TeamPage() {
   useEffect(() => {
     if (!loading) { setSlowLoad(false); return; }
     const t = setTimeout(() => setSlowLoad(true), 5000);
+    return () => clearTimeout(t);
+  }, [loading]);
+
+  /* Hide page loader — minimum 900ms so animation is visible */
+  useEffect(() => {
+    if (loading) return;
+    const t = setTimeout(() => setShowLoader(false), 900);
     return () => clearTimeout(t);
   }, [loading]);
 
@@ -219,19 +261,52 @@ export default function TeamPage() {
       animate={{ opacity: 1 }}
       transition={{ duration: 0.6 }}
     >
+      {/* Branded loading screen */}
+      <PageLoader visible={showLoader} />
+
       {/* Particle network background */}
       <ParticleNetwork />
 
-      {/* Cursor glow */}
+      {/* Cursor — large ambient glow */}
       <div
         ref={cursorRef}
-        className="pointer-events-none fixed z-0 rounded-full hidden md:block"
+        className="pointer-events-none fixed rounded-full hidden md:block"
         style={{
-          width: 400, height: 400,
-          background: "radial-gradient(circle, rgba(255,200,100,0.03) 0%, transparent 65%)",
+          width: 480, height: 480,
+          background: "radial-gradient(circle, rgba(255,200,100,0.055) 0%, transparent 65%)",
           transform: "translate(-50%, -50%)",
-          transition: "left 0.12s ease, top 0.12s ease",
           top: "50%", left: "50%",
+          zIndex: 2,
+        }}
+      />
+
+      {/* Cursor — trailing ring (lerp lag) */}
+      <div
+        ref={cursorRingRef}
+        className="pointer-events-none fixed hidden md:block"
+        style={{
+          width: 36, height: 36,
+          borderRadius: "50%",
+          border: "1px solid rgba(255,200,100,0.55)",
+          transform: "translate(-50%, -50%)",
+          top: "50%", left: "50%",
+          zIndex: 3,
+          boxShadow: "0 0 8px rgba(255,200,100,0.2), inset 0 0 8px rgba(255,200,100,0.05)",
+        }}
+      />
+
+      {/* Cursor — exact dot */}
+      <div
+        ref={cursorDotRef}
+        className="pointer-events-none fixed hidden md:block"
+        style={{
+          width: 5, height: 5,
+          borderRadius: "50%",
+          background: "linear-gradient(135deg, #ffc864, #96b464)",
+          transform: "translate(-50%, -50%)",
+          top: "50%", left: "50%",
+          zIndex: 4,
+          boxShadow: "0 0 6px rgba(255,200,100,0.8)",
         }}
       />
 
