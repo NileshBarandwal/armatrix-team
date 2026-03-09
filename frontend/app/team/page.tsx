@@ -442,14 +442,11 @@ export default function TeamPage() {
               People building
             </motion.div>
             <motion.div
+              className="gold-text"
               style={{
                 x: line2X, y: line2Y,
-                display: "block",
+                display: "inline-block",
                 fontSize: "clamp(2.8rem, 7vw, 5.5rem)",
-                background: "linear-gradient(135deg, #ffc864 0%, #96b464 100%)",
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent",
-                backgroundClip: "text",
               }}
               initial={{ opacity: 0, y: 60 }}
               animate={{ opacity: 1, y: 0 }}
