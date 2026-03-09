@@ -16,35 +16,28 @@ import ToastContainer, { ToastData } from "./components/Toast";
 const FILTERS = ["All", "Leadership", "Engineering", "Operations"];
 
 /* ── Count-up hook ── */
-function useCountUp(target: number, active: boolean, duration = 1200) {
+function useCountUp(target: number, active: boolean, duration = 1000) {
   const [value, setValue] = useState(0);
   useEffect(() => {
     if (!active || target === 0) return;
-    let start = 0;
-    const steps = 40;
+    let frame = 0;
+    const steps = 36;
     const step = target / steps;
     const interval = setInterval(() => {
-      start += step;
-      if (start >= target) {
-        setValue(target);
-        clearInterval(interval);
-      } else {
-        setValue(Math.floor(start));
-      }
+      frame++;
+      if (frame >= steps) { setValue(target); clearInterval(interval); }
+      else setValue(Math.floor(step * frame));
     }, duration / steps);
     return () => clearInterval(interval);
   }, [target, active, duration]);
   return value;
 }
 
-/* ── Stat with count-up ── */
 function Stat({ target, label, active }: { target: number; label: string; active: boolean }) {
-  const value = useCountUp(target, active);
+  const v = useCountUp(target, active);
   return (
-    <div>
-      <span className="text-3xl font-bold tracking-tight tabular-nums" style={{ color: "var(--text-primary)" }}>
-        {value}
-      </span>
+    <div className="reveal">
+      <span className="text-3xl font-bold tracking-tight tabular-nums" style={{ color: "var(--text-primary)" }}>{v}</span>
       <span className="text-sm ml-2" style={{ color: "var(--text-muted)" }}>{label}</span>
     </div>
   );
@@ -66,7 +59,6 @@ function SkeletonCard() {
       <div className="space-y-2">
         <div className="h-3 rounded w-full" style={{ background: "var(--bg-elevated)" }} />
         <div className="h-3 rounded w-5/6" style={{ background: "var(--bg-elevated)" }} />
-        <div className="h-3 rounded w-4/6" style={{ background: "var(--bg-elevated)" }} />
       </div>
     </div>
   );
@@ -84,6 +76,8 @@ export default function TeamPage() {
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [toasts, setToasts] = useState<ToastData[]>([]);
   const [statsVisible, setStatsVisible] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
   const statsRef = useRef<HTMLDivElement>(null);
   const cursorRef = useRef<HTMLDivElement>(null);
   const toastId = useRef(0);
@@ -100,16 +94,34 @@ export default function TeamPage() {
     return () => window.removeEventListener("mousemove", move);
   }, []);
 
+  /* Nav shrink on scroll */
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 40);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
   /* Stats count-up trigger */
   useEffect(() => {
     if (!statsRef.current) return;
     const obs = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) setStatsVisible(true); },
-      { threshold: 0.5 }
+      ([e]) => { if (e.isIntersecting) setStatsVisible(true); },
+      { threshold: 0.4 }
     );
     obs.observe(statsRef.current);
     return () => obs.disconnect();
   }, []);
+
+  /* Scroll-triggered reveal for all .reveal elements */
+  useEffect(() => {
+    const els = document.querySelectorAll(".reveal");
+    const obs = new IntersectionObserver(
+      (entries) => entries.forEach((e) => { if (e.isIntersecting) e.target.classList.add("visible"); }),
+      { threshold: 0.15 }
+    );
+    els.forEach((el) => obs.observe(el));
+    return () => obs.disconnect();
+  }, [members]);
 
   const addToast = useCallback((message: string, type: "success" | "error" = "success") => {
     const id = ++toastId.current;
@@ -125,7 +137,7 @@ export default function TeamPage() {
       const data = await getTeam();
       setMembers(data);
     } catch {
-      setError("Could not reach the API. Is the backend running?");
+      setError("Could not reach the API. Check that the backend is running.");
     } finally {
       setLoading(false);
     }
@@ -165,46 +177,54 @@ export default function TeamPage() {
   };
 
   const departments = [...new Set(members.map((m) => m.department))];
-
   const filtered = members
     .filter((m) => filter === "All" || m.department === filter)
     .filter((m) =>
-      search.trim() === "" ||
+      !search.trim() ||
       m.name.toLowerCase().includes(search.toLowerCase()) ||
       m.role.toLowerCase().includes(search.toLowerCase())
     );
 
   return (
-    <div className="min-h-screen relative" style={{ background: "var(--bg)" }}>
+    <div className="min-h-screen page-enter relative" style={{ background: "var(--bg)" }}>
+
+      {/* Floating background orbs */}
+      <div className="orb orb-1" />
+      <div className="orb orb-2" />
+      <div className="orb orb-3" />
 
       {/* Cursor spotlight */}
       <div
         ref={cursorRef}
         className="pointer-events-none fixed z-0 rounded-full hidden md:block"
         style={{
-          width: 520,
-          height: 520,
-          background: "radial-gradient(circle, rgba(255,255,255,0.035) 0%, transparent 65%)",
+          width: 480, height: 480,
+          background: "radial-gradient(circle, rgba(255,255,255,0.032) 0%, transparent 65%)",
           transform: "translate(-50%, -50%)",
-          transition: "left 0.12s ease, top 0.12s ease",
-          top: "50%",
-          left: "50%",
+          transition: "left 0.1s ease, top 0.1s ease",
+          top: "50%", left: "50%",
         }}
       />
 
-      {/* Nav */}
+      {/* Nav — shrinks on scroll */}
       <nav
-        className="sticky top-0 z-40 flex items-center justify-between px-6 md:px-12 py-4"
+        className="sticky top-0 z-40 flex items-center justify-between px-6 md:px-12 transition-all duration-300"
         style={{
+          padding: scrolled ? "12px 48px" : "16px 48px",
           borderBottom: "1px solid var(--border)",
-          background: "rgba(10,10,10,0.88)",
-          backdropFilter: "blur(14px)",
+          background: scrolled ? "rgba(10,10,10,0.97)" : "rgba(10,10,10,0.85)",
+          backdropFilter: "blur(16px)",
         }}
       >
         <a href="https://armatrix.in" className="flex items-center gap-2.5">
           <div
-            className="w-6 h-6 rounded flex items-center justify-center text-xs font-bold"
-            style={{ background: "var(--text-primary)", color: "var(--bg)" }}
+            className="flex items-center justify-center text-xs font-bold rounded transition-all duration-300"
+            style={{
+              width: scrolled ? 22 : 26,
+              height: scrolled ? 22 : 26,
+              background: "var(--text-primary)",
+              color: "var(--bg)",
+            }}
           >
             A
           </div>
@@ -212,6 +232,7 @@ export default function TeamPage() {
             Armatrix
           </span>
         </a>
+
         <div className="flex items-center gap-6">
           {["Home", "Careers", "Blog", "Contact"].map((link) => (
             <a
@@ -234,33 +255,21 @@ export default function TeamPage() {
 
         {/* Hero */}
         <div className="mb-16 md:mb-24">
-          <p
-            className="word-animate text-xs font-medium tracking-widest uppercase mb-6"
-            style={{ color: "var(--text-muted)", animationDelay: "0ms" }}
-          >
+          <p className="word-animate text-xs font-medium tracking-widest uppercase mb-6" style={{ color: "var(--text-muted)", animationDelay: "50ms" }}>
             The team
           </p>
-
           <h1
             className="font-bold leading-none tracking-tight mb-6"
-            style={{
-              fontSize: "clamp(3rem, 8vw, 6rem)",
-              letterSpacing: "-0.035em",
-              lineHeight: 1.02,
-            }}
+            style={{ fontSize: "clamp(3rem, 8vw, 6rem)", letterSpacing: "-0.035em", lineHeight: 1.02 }}
           >
-            <span className="word-animate block" style={{ color: "var(--text-primary)", animationDelay: "80ms" }}>
+            <span className="word-animate block" style={{ color: "var(--text-primary)", animationDelay: "120ms" }}>
               People building
             </span>
-            <span className="word-animate block" style={{ color: "var(--text-secondary)", animationDelay: "180ms" }}>
+            <span className="word-animate block" style={{ color: "var(--text-secondary)", animationDelay: "220ms" }}>
               the future.
             </span>
           </h1>
-
-          <p
-            className="word-animate text-base md:text-lg max-w-lg leading-relaxed"
-            style={{ color: "var(--text-muted)", animationDelay: "300ms" }}
-          >
+          <p className="word-animate text-base md:text-lg max-w-lg leading-relaxed" style={{ color: "var(--text-muted)", animationDelay: "340ms" }}>
             A small, focused team working on snake-like robotic arms for
             industrial inspection — reaching places humans can&apos;t safely go.
           </p>
@@ -277,19 +286,14 @@ export default function TeamPage() {
           )}
         </div>
 
-        {/* Controls row: search + filters + add button */}
-        <div className="flex flex-col sm:flex-row sm:items-center gap-3 mb-12">
+        {/* Controls — search + filters + add button in one row */}
+        <div className="reveal flex flex-col sm:flex-row sm:items-center gap-3 mb-12">
           {/* Search */}
           <div className="relative">
             <svg
               className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"
-              width="14"
-              height="14"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
+              width="14" height="14" viewBox="0 0 24 24"
+              fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"
               style={{ color: "var(--text-muted)" }}
             >
               <circle cx="11" cy="11" r="8" />
@@ -301,21 +305,14 @@ export default function TeamPage() {
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search members..."
               className="pl-9 pr-4 py-2 text-sm rounded-lg outline-none transition-colors w-full sm:w-48"
-              style={{
-                background: "var(--bg-raised)",
-                border: "1px solid var(--border)",
-                color: "var(--text-primary)",
-              }}
+              style={{ background: "var(--bg-raised)", border: "1px solid var(--border)", color: "var(--text-primary)" }}
               onFocus={(e) => (e.currentTarget.style.borderColor = "var(--border-hover)")}
               onBlur={(e) => (e.currentTarget.style.borderColor = "var(--border)")}
             />
           </div>
 
-          {/* Filters */}
-          <div
-            className="flex gap-1 p-1 rounded-lg flex-wrap"
-            style={{ background: "var(--bg-raised)", border: "1px solid var(--border)" }}
-          >
+          {/* Filter tabs */}
+          <div className="flex gap-1 p-1 rounded-lg flex-wrap" style={{ background: "var(--bg-raised)", border: "1px solid var(--border)" }}>
             {FILTERS.map((f) => {
               const count = f === "All" ? members.length : members.filter((m) => m.department === f).length;
               const active = filter === f;
@@ -323,7 +320,7 @@ export default function TeamPage() {
                 <button
                   key={f}
                   onClick={() => changeFilter(f)}
-                  className="px-3 py-1.5 rounded-md text-sm transition-all"
+                  className="px-3 py-1.5 rounded-md text-sm transition-all duration-200"
                   style={{
                     background: active ? "var(--bg-elevated)" : "transparent",
                     color: active ? "var(--text-primary)" : "var(--text-muted)",
@@ -342,13 +339,13 @@ export default function TeamPage() {
             })}
           </div>
 
-          {/* Add member — lives next to filters */}
+          {/* Add member — next to filters */}
           <button
             onClick={() => { setEditTarget(null); setModalOpen(true); }}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all hover:opacity-90 active:scale-95 whitespace-nowrap ml-auto"
+            className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 hover:opacity-90 active:scale-95 whitespace-nowrap ml-auto"
             style={{ background: "var(--btn-primary-bg)", color: "var(--btn-primary-text)" }}
           >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
               <line x1="12" y1="5" x2="12" y2="19" />
               <line x1="5" y1="12" x2="19" y2="12" />
             </svg>
@@ -356,7 +353,7 @@ export default function TeamPage() {
           </button>
         </div>
 
-        {/* Loading */}
+        {/* Loading skeletons */}
         {loading && (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {Array.from({ length: 6 }).map((_, i) => <SkeletonCard key={i} />)}
@@ -365,9 +362,16 @@ export default function TeamPage() {
 
         {/* Error */}
         {!loading && error && (
-          <div className="py-24 text-center">
+          <div className="py-24 text-center reveal">
             <p className="text-sm mb-3" style={{ color: "#f87171" }}>{error}</p>
-            <button onClick={() => { setError(""); setLoading(true); fetchTeam(); }} className="text-xs underline" style={{ color: "var(--text-muted)" }}>
+            <p className="text-xs mb-4" style={{ color: "var(--text-muted)" }}>
+              Make sure <code className="px-1 py-0.5 rounded text-xs" style={{ background: "var(--bg-elevated)" }}>NEXT_PUBLIC_API_URL</code> is set correctly.
+            </p>
+            <button
+              onClick={() => { setError(""); setLoading(true); fetchTeam(); }}
+              className="text-xs underline"
+              style={{ color: "var(--text-secondary)" }}
+            >
               Try again
             </button>
           </div>
@@ -387,7 +391,7 @@ export default function TeamPage() {
           </div>
         )}
 
-        {/* Cards grid — key triggers re-animation on filter change */}
+        {/* Card grid — key triggers re-animation on filter/search change */}
         {!loading && !error && filtered.length > 0 && (
           <div key={`${filterKey}-${search}`} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {filtered.map((member, i) => (
@@ -403,7 +407,7 @@ export default function TeamPage() {
         )}
       </main>
 
-      {/* Add / Edit modal */}
+      {/* Modals */}
       {modalOpen && (
         <MemberModal
           member={editTarget}
@@ -412,35 +416,22 @@ export default function TeamPage() {
         />
       )}
 
-      {/* Delete confirm */}
       {deleteId && (
         <div
           className="modal-backdrop fixed inset-0 z-50 flex items-center justify-center p-4"
-          style={{ background: "rgba(0,0,0,0.85)", backdropFilter: "blur(6px)" }}
+          style={{ background: "rgba(0,0,0,0.88)", backdropFilter: "blur(8px)" }}
         >
           <div
             className="modal-panel w-full max-w-sm rounded-2xl p-6"
             style={{ background: "var(--bg-raised)", border: "1px solid var(--border-hover)" }}
           >
-            <h3 className="text-base font-semibold mb-2" style={{ color: "var(--text-primary)" }}>
-              Remove member?
-            </h3>
-            <p className="text-sm mb-6" style={{ color: "var(--text-muted)" }}>
-              This action cannot be undone.
-            </p>
+            <h3 className="text-base font-semibold mb-2" style={{ color: "var(--text-primary)" }}>Remove member?</h3>
+            <p className="text-sm mb-6" style={{ color: "var(--text-muted)" }}>This action cannot be undone.</p>
             <div className="flex gap-3">
-              <button
-                onClick={() => setDeleteId(null)}
-                className="flex-1 py-2.5 rounded-xl text-sm font-medium"
-                style={{ color: "var(--text-secondary)", border: "1px solid var(--border)" }}
-              >
+              <button onClick={() => setDeleteId(null)} className="flex-1 py-2.5 rounded-xl text-sm font-medium transition-colors" style={{ color: "var(--text-secondary)", border: "1px solid var(--border)" }}>
                 Cancel
               </button>
-              <button
-                onClick={confirmDelete}
-                className="flex-1 py-2.5 rounded-xl text-sm font-semibold hover:opacity-90"
-                style={{ background: "#ef4444", color: "#fff" }}
-              >
+              <button onClick={confirmDelete} className="flex-1 py-2.5 rounded-xl text-sm font-semibold hover:opacity-90 transition-opacity" style={{ background: "#ef4444", color: "#fff" }}>
                 Remove
               </button>
             </div>
