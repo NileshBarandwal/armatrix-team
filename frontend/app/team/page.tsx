@@ -18,11 +18,6 @@ import ToastContainer, { ToastData } from "./components/Toast";
 
 const FILTERS = ["All", "Leadership", "Engineering", "Operations"];
 
-const MARQUEE_ITEMS = [
-  "Industrial Inspection", "Snake-like Robotic Arm", "AI Navigation",
-  "Confined Spaces", "Deep Tech", "Computer Vision", "Embedded Systems",
-  "Hardware Startup", "IIT Bombay", "Access Revolutionized",
-];
 
 /* ── Count-up ── */
 function useCountUp(target: number, active: boolean, duration = 900) {
@@ -65,22 +60,6 @@ function Divider() {
   return <div className="w-px h-5 self-center" style={{ background: "var(--border-hover)" }} />;
 }
 
-/* ── Marquee ── */
-function Marquee() {
-  const doubled = [...MARQUEE_ITEMS, ...MARQUEE_ITEMS];
-  return (
-    <div className="marquee-outer py-4" style={{ borderTop: "1px solid var(--border)", borderBottom: "1px solid var(--border)" }}>
-      <div className="marquee-track">
-        {doubled.map((item, i) => (
-          <span key={i} className="marquee-item">
-            {item}
-            <span className="marquee-dot" />
-          </span>
-        ))}
-      </div>
-    </div>
-  );
-}
 
 /* ── Skeleton ── */
 function SkeletonCard() {
@@ -342,9 +321,6 @@ export default function TeamPage() {
             )}
           </AnimatePresence>
         </div>
-
-        {/* Marquee band */}
-        <Marquee />
 
         {/* Controls + cards */}
         <div className="max-w-6xl mx-auto px-6 md:px-12 py-12">
