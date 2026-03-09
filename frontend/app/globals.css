@@ -1,46 +1,68 @@
 @import "tailwindcss";
 
 :root {
-  --bg: #070b14;
-  --card: #0e1421;
-  --card-hover: #121a2b;
-  --border: #1c2a3f;
-  --border-hover: #2d4a6e;
-  --accent: #4f9cf9;
-  --accent-glow: rgba(79, 156, 249, 0.15);
-  --text-primary: #f0f4ff;
-  --text-secondary: #8899b4;
-  --text-muted: #4a5a72;
+  --bg: #0a0a0a;
+  --bg-raised: #111111;
+  --bg-elevated: #161616;
+  --border: #1f1f1f;
+  --border-hover: #2a2a2a;
+  --text-primary: #ffffff;
+  --text-secondary: #9ca3af;
+  --text-muted: #4b5563;
+  --btn-primary-bg: #ffffff;
+  --btn-primary-text: #000000;
 }
 
 * {
   box-sizing: border-box;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   background: var(--bg);
   color: var(--text-primary);
-  font-family: var(--font-geist-sans), system-ui, sans-serif;
+  font-family: var(--font-inter), "Inter", system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Dot grid background */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-image: radial-gradient(circle, #1c1c1c 1px, transparent 1px);
+  background-size: 28px 28px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+#__next,
+main {
+  position: relative;
+  z-index: 1;
 }
 
 /* Scrollbar */
 ::-webkit-scrollbar {
-  width: 6px;
+  width: 5px;
 }
 ::-webkit-scrollbar-track {
   background: var(--bg);
 }
 ::-webkit-scrollbar-thumb {
-  background: var(--border);
+  background: #2a2a2a;
   border-radius: 3px;
 }
 
-/* Card fade-in animation */
+/* Card animation */
 @keyframes fadeUp {
   from {
     opacity: 0;
-    transform: translateY(16px);
+    transform: translateY(20px);
   }
   to {
     opacity: 1;
@@ -49,25 +71,20 @@ body {
 }
 
 .card-animate {
-  animation: fadeUp 0.4s ease forwards;
+  animation: fadeUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   opacity: 0;
 }
 
-/* Modal backdrop */
-@keyframes fadeIn {
+/* Modal animations */
+@keyframes backdropIn {
   from { opacity: 0; }
   to   { opacity: 1; }
 }
 
-.modal-backdrop {
-  animation: fadeIn 0.2s ease forwards;
-}
-
-/* Modal slide-in */
-@keyframes slideUp {
+@keyframes panelIn {
   from {
     opacity: 0;
-    transform: translateY(24px) scale(0.97);
+    transform: translateY(20px) scale(0.98);
   }
   to {
     opacity: 1;
@@ -75,8 +92,43 @@ body {
   }
 }
 
+.modal-backdrop {
+  animation: backdropIn 0.2s ease forwards;
+}
+
 .modal-panel {
-  animation: slideUp 0.25s ease forwards;
+  animation: panelIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Toast animations */
+@keyframes toastIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes toastOut {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+.toast-enter {
+  animation: toastIn 0.2s ease forwards;
+}
+
+.toast-exit {
+  animation: toastOut 0.2s ease forwards;
 }
 
 /* Line clamp */
