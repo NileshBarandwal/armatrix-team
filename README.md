@@ -2,7 +2,7 @@
 
 A team directory page that doesn't exist on armatrix.in yet. Browse the people behind the company, filter by department, and manage members (add, edit, delete) through a clean UI backed by a REST API.
 
-**Frontend:** [https://armatrix-team-6pz4.vercel.app/team](https://armatrix-team-6pz4.vercel.app/team)
+**Frontend:** [https://armatrix-team-satoshis-projects-a89d90ba.vercel.app/team](https://armatrix-team-satoshis-projects-a89d90ba.vercel.app/team)
 **Backend API:** [https://armatrix-team-api.up.railway.app/team](https://armatrix-team-api.up.railway.app/team)
 **API Docs:** [https://armatrix-team-api.up.railway.app/docs](https://armatrix-team-api.up.railway.app/docs)
 
