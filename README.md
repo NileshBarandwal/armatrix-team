@@ -46,6 +46,39 @@ npm run dev
 
 Visit `http://localhost:3000/team`.
 
+### 3. Running unit tests
+
+The backend has 17 unit tests covering all 5 endpoints. With the virtualenv active:
+
+```bash
+cd backend
+source venv/bin/activate        # Windows: venv\Scripts\activate
+pytest test_main.py -v
+```
+
+Expected output — all 17 tests should pass:
+```
+test_main.py::test_list_team_returns_seeded_members         PASSED
+test_main.py::test_list_team_sorted_by_order                PASSED
+test_main.py::test_list_team_member_has_required_fields     PASSED
+test_main.py::test_get_member_by_id                         PASSED
+test_main.py::test_get_member_not_found                     PASSED
+test_main.py::test_create_member_returns_201                PASSED
+test_main.py::test_create_member_persists_in_store          PASSED
+test_main.py::test_create_member_increments_list            PASSED
+test_main.py::test_create_member_optional_fields_default_none PASSED
+test_main.py::test_update_member_role                       PASSED
+test_main.py::test_update_member_partial_does_not_clobber_other_fields PASSED
+test_main.py::test_update_member_not_found                  PASSED
+test_main.py::test_delete_member_removes_from_store         PASSED
+test_main.py::test_delete_member_decrements_list            PASSED
+test_main.py::test_delete_member_not_found                  PASSED
+test_main.py::test_delete_member_returns_id                 PASSED
+test_main.py::test_root_endpoint                            PASSED
+
+17 passed in 0.21s
+```
+
 ---
 
 ## What's built
@@ -55,11 +88,14 @@ Visit `http://localhost:3000/team`.
 - Team member schema: name, role, department, bio, photo URL, LinkedIn, GitHub, display order
 - Seeded with 7 fictional members on startup
 - In-memory storage — resets on restart, no DB setup needed
+- 17 unit tests with pytest + httpx TestClient
 
-**Frontend (Next.js)**
-- `/team` page — responsive card grid, filters by department
+**Frontend (Next.js 16)**
+- `/team` page — responsive card grid, department filters, member search
 - Add / edit via a modal form, delete with a confirmation dialog
-- Skeleton loading states, card animations, hover interactions
+- Full-page branded loader, skeleton cards, Framer Motion stagger animations
+- 3D card tilt on hover, animated particle network background, custom cursor
+- Mobile-responsive with hamburger nav drawer
 - `/` redirects to `/team`
 
 ---
@@ -70,11 +106,19 @@ Visit `http://localhost:3000/team`.
 
 **In-memory over a DB** — a single `dict` in Python is all this needs. Zero config, zero migrations, runs anywhere. The data doesn't need to outlive the server for this assignment.
 
-**No UI library** — animations are `@keyframes` CSS, icons are inline SVGs. Didn't want the bundle bloated with a component library for a page this focused.
+**Framer Motion for animations** — used only for layout transitions, parallax, and entrance animations. No full component library; icons are inline SVGs, all other styling is custom CSS + Tailwind.
 
 **Client-side mutations** — after any add/edit/delete, state is updated locally instead of re-fetching the full list. Faster feedback, fewer round trips.
 
-**Dark navy design** — didn't try to clone armatrix.in exactly. Went for something that felt like it *could* belong there — dark, technical, clean — while giving myself room to make it look polished.
+**Brand-matched design** — matched armatrix.in's visual language (pure black background, Raleway + Inter fonts, gold-to-green gradient accent, logo). Felt right to build something that could actually ship on their site rather than a generic dark theme.
+
+**Cold start handling** — Railway free tier sleeps after inactivity. The frontend retries up to 3 times with a 30s timeout each and shows a "waking up" indicator after 5s so users aren't left staring at a broken page.
 
 ---
 
+## If I had more time
+
+- Persist data with a lightweight DB (SQLite + SQLAlchemy)
+- Drag-to-reorder for the display order field
+- Transition animations between filter tabs
+- Photo upload instead of URL input
