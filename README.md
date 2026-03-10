@@ -114,11 +114,3 @@ test_main.py::test_root_endpoint                            PASSED
 
 **Cold start handling** — Railway free tier sleeps after inactivity. The frontend retries up to 3 times with a 30s timeout each and shows a "waking up" indicator after 5s so users aren't left staring at a broken page.
 
----
-
-## If I had more time
-
-- Persist data with a lightweight DB (SQLite + SQLAlchemy)
-- Drag-to-reorder for the display order field
-- Transition animations between filter tabs
-- Photo upload instead of URL input
