@@ -190,12 +190,11 @@ export default function TeamPage() {
     return () => clearTimeout(t);
   }, [loading]);
 
-  /* Hide page loader — minimum 900ms so animation is visible */
+  /* Hide page loader after 1.5s max — never block on API response time */
   useEffect(() => {
-    if (loading) return;
-    const t = setTimeout(() => setShowLoader(false), 900);
+    const t = setTimeout(() => setShowLoader(false), 1500);
     return () => clearTimeout(t);
-  }, [loading]);
+  }, []);
 
   useEffect(() => {
     if (mobileMenuOpen) {
