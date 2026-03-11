@@ -21,7 +21,6 @@ import PageLoader from "./components/PageLoader";
 // Canvas uses browser APIs — must be client-only, no SSR
 const ParticleNetwork = dynamic(() => import("./components/ParticleNetwork"), { ssr: false });
 
-const FILTERS = ["All", "Leadership", "Engineering", "Operations"];
 const NAV_LINKS = [
   { label: "Home", href: "https://armatrix.in", external: true },
   { label: "Careers", href: "https://armatrix.in/careers", external: true },
@@ -263,6 +262,8 @@ export default function TeamPage() {
   };
 
   const departments = [...new Set(members.map((m) => m.department))];
+  const filters = ["All", ...departments];
+  if (filter !== "All" && !departments.includes(filter)) setFilter("All");
   const filtered = members
     .filter((m) => filter === "All" || m.department === filter)
     .filter((m) => !search.trim() ||
@@ -523,7 +524,7 @@ export default function TeamPage() {
             {/* Filters */}
             <div className="team-filter-row flex gap-1 p-1 rounded-lg"
               style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.08)" }}>
-              {FILTERS.map((f) => {
+              {filters.map((f) => {
                 const count = f === "All" ? members.length : members.filter((m) => m.department === f).length;
                 const active = filter === f;
                 return (
