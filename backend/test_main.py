@@ -5,18 +5,46 @@ Run with: pytest test_main.py -v
 
 import pytest
 from fastapi.testclient import TestClient
-from main import app, team_members, seed_data
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.pool import StaticPool
+
+from database import Base, get_db
+from main import app, seed_data
+
+SQLALCHEMY_TEST_URL = "sqlite:///:memory:"
+
+test_engine = create_engine(
+    SQLALCHEMY_TEST_URL,
+    connect_args={"check_same_thread": False},
+    poolclass=StaticPool,
+)
+TestSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=test_engine)
+
+
+def override_get_db():
+    db = TestSessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
+
+app.dependency_overrides[get_db] = override_get_db
 
 client = TestClient(app)
 
 
 @pytest.fixture(autouse=True)
 def reset_store():
-    """Reset in-memory store to clean seeded state before every test."""
-    team_members.clear()
-    seed_data()
+    """Reset test DB to clean seeded state before every test."""
+    Base.metadata.drop_all(bind=test_engine)
+    Base.metadata.create_all(bind=test_engine)
+    db = TestSessionLocal()
+    seed_data(db)
+    db.close()
     yield
-    team_members.clear()
+    Base.metadata.drop_all(bind=test_engine)
 
 
 # ── GET /team ──────────────────────────────────────────────────────────────

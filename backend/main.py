@@ -1,8 +1,14 @@
-from fastapi import FastAPI, HTTPException
-from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
-from typing import Optional
 import uuid
+from pathlib import Path
+from typing import Optional
+
+from fastapi import Depends, FastAPI, File, HTTPException, UploadFile
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from pydantic import BaseModel
+from sqlalchemy.orm import Session
+
+from database import Base, SessionLocal as _SessionLocal, TeamMemberDB, engine, get_db
 
 app = FastAPI(title="Armatrix Team API", version="1.0.0")
 
@@ -13,6 +19,13 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+UPLOADS_DIR = Path(__file__).parent / "uploads"
+UPLOADS_DIR.mkdir(exist_ok=True)
+app.mount("/uploads", StaticFiles(directory=str(UPLOADS_DIR)), name="uploads")
+
+ALLOWED_EXTENSIONS = {"jpg", "jpeg", "png", "webp"}
+
 
 # --- Schema ---
 class TeamMemberBase(BaseModel):
@@ -25,8 +38,10 @@ class TeamMemberBase(BaseModel):
     github_url: Optional[str] = None
     order: Optional[int] = 99
 
+
 class TeamMemberCreate(TeamMemberBase):
     pass
+
 
 class TeamMemberUpdate(BaseModel):
     name: Optional[str] = None
@@ -38,15 +53,24 @@ class TeamMemberUpdate(BaseModel):
     github_url: Optional[str] = None
     order: Optional[int] = None
 
+
 class TeamMember(TeamMemberBase):
     id: str
 
-# --- In-memory store ---
-team_members: dict[str, TeamMember] = {}
+    class Config:
+        from_attributes = True
 
-def seed_data():
+
+# --- DB helpers ---
+def _db_to_schema(row: TeamMemberDB) -> TeamMember:
+    return TeamMember.model_validate(row)
+
+
+def seed_data(db: Session) -> None:
+    if db.query(TeamMemberDB).count() > 0:
+        return
     members = [
-        TeamMember(
+        TeamMemberDB(
             id=str(uuid.uuid4()),
             name="Arjun Mehta",
             role="CEO & Co-Founder",
@@ -57,7 +81,7 @@ def seed_data():
             github_url="https://github.com",
             order=1,
         ),
-        TeamMember(
+        TeamMemberDB(
             id=str(uuid.uuid4()),
             name="Priya Nair",
             role="CTO & Co-Founder",
@@ -68,7 +92,7 @@ def seed_data():
             github_url="https://github.com",
             order=2,
         ),
-        TeamMember(
+        TeamMemberDB(
             id=str(uuid.uuid4()),
             name="Rohan Verma",
             role="Lead Robotics Engineer",
@@ -79,7 +103,7 @@ def seed_data():
             github_url="https://github.com",
             order=3,
         ),
-        TeamMember(
+        TeamMemberDB(
             id=str(uuid.uuid4()),
             name="Sneha Rao",
             role="AI & Computer Vision Lead",
@@ -90,7 +114,7 @@ def seed_data():
             github_url="https://github.com",
             order=4,
         ),
-        TeamMember(
+        TeamMemberDB(
             id=str(uuid.uuid4()),
             name="Karan Joshi",
             role="Embedded Systems Engineer",
@@ -101,7 +125,7 @@ def seed_data():
             github_url="https://github.com",
             order=5,
         ),
-        TeamMember(
+        TeamMemberDB(
             id=str(uuid.uuid4()),
             name="Ananya Singh",
             role="Head of Operations",
@@ -111,7 +135,7 @@ def seed_data():
             linkedin_url="https://linkedin.com",
             order=6,
         ),
-        TeamMember(
+        TeamMemberDB(
             id=str(uuid.uuid4()),
             name="Dev Patel",
             role="Software Engineer",
@@ -123,47 +147,95 @@ def seed_data():
             order=7,
         ),
     ]
-    for m in members:
-        team_members[m.id] = m
+    db.add_all(members)
+    db.commit()
 
-seed_data()
+
+# --- Startup ---
+Base.metadata.create_all(bind=engine)
+
+_startup_db = _SessionLocal()
+try:
+    seed_data(_startup_db)
+finally:
+    _startup_db.close()
+
 
 # --- Routes ---
 @app.get("/")
 def root():
     return {"message": "Armatrix Team API", "version": "1.0.0"}
 
+
 @app.get("/team", response_model=list[TeamMember])
-def get_team():
-    return sorted(team_members.values(), key=lambda m: m.order)
+def get_team(db: Session = Depends(get_db)):
+    rows = db.query(TeamMemberDB).order_by(TeamMemberDB.order).all()
+    return [_db_to_schema(r) for r in rows]
+
 
 @app.get("/team/{member_id}", response_model=TeamMember)
-def get_member(member_id: str):
-    if member_id not in team_members:
+def get_member(member_id: str, db: Session = Depends(get_db)):
+    row = db.query(TeamMemberDB).filter(TeamMemberDB.id == member_id).first()
+    if not row:
         raise HTTPException(status_code=404, detail="Team member not found")
-    return team_members[member_id]
+    return _db_to_schema(row)
+
 
 @app.post("/team", response_model=TeamMember, status_code=201)
-def create_member(member: TeamMemberCreate):
+def create_member(member: TeamMemberCreate, db: Session = Depends(get_db)):
     new_id = str(uuid.uuid4())
-    new_member = TeamMember(id=new_id, **member.model_dump())
-    team_members[new_id] = new_member
-    return new_member
+    row = TeamMemberDB(id=new_id, **member.model_dump())
+    db.add(row)
+    db.commit()
+    db.refresh(row)
+    return _db_to_schema(row)
+
 
 @app.put("/team/{member_id}", response_model=TeamMember)
-def update_member(member_id: str, updates: TeamMemberUpdate):
-    if member_id not in team_members:
+def update_member(member_id: str, updates: TeamMemberUpdate, db: Session = Depends(get_db)):
+    row = db.query(TeamMemberDB).filter(TeamMemberDB.id == member_id).first()
+    if not row:
         raise HTTPException(status_code=404, detail="Team member not found")
-    existing = team_members[member_id]
-    updated_data = existing.model_dump()
     for field, value in updates.model_dump(exclude_unset=True).items():
-        updated_data[field] = value
-    team_members[member_id] = TeamMember(**updated_data)
-    return team_members[member_id]
+        setattr(row, field, value)
+    db.commit()
+    db.refresh(row)
+    return _db_to_schema(row)
+
 
 @app.delete("/team/{member_id}")
-def delete_member(member_id: str):
-    if member_id not in team_members:
+def delete_member(member_id: str, db: Session = Depends(get_db)):
+    row = db.query(TeamMemberDB).filter(TeamMemberDB.id == member_id).first()
+    if not row:
         raise HTTPException(status_code=404, detail="Team member not found")
-    del team_members[member_id]
+    db.delete(row)
+    db.commit()
     return {"message": "Team member deleted", "id": member_id}
+
+
+@app.post("/team/{member_id}/photo", response_model=TeamMember)
+async def upload_photo(
+    member_id: str,
+    file: UploadFile = File(...),
+    db: Session = Depends(get_db),
+):
+    row = db.query(TeamMemberDB).filter(TeamMemberDB.id == member_id).first()
+    if not row:
+        raise HTTPException(status_code=404, detail="Team member not found")
+
+    ext = (file.filename or "").rsplit(".", 1)[-1].lower()
+    if ext not in ALLOWED_EXTENSIONS:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Unsupported file type. Allowed: {', '.join(sorted(ALLOWED_EXTENSIONS))}",
+        )
+
+    filename = f"{member_id}.{ext}"
+    dest = UPLOADS_DIR / filename
+    contents = await file.read()
+    dest.write_bytes(contents)
+
+    row.photo_url = f"/uploads/{filename}"
+    db.commit()
+    db.refresh(row)
+    return _db_to_schema(row)
