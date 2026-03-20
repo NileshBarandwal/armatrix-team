@@ -42,10 +42,20 @@ async function fetchWithRetry(
   throw lastError;
 }
 
+// Uploaded photos are stored as "/uploads/..." relative paths on the backend.
+// Prefix them with the API base so <img> tags resolve to the right server.
+function resolvePhotoUrl(member: TeamMember): TeamMember {
+  if (member.photo_url?.startsWith("/uploads/")) {
+    return { ...member, photo_url: `${API_BASE}${member.photo_url}` };
+  }
+  return member;
+}
+
 export async function getTeam(): Promise<TeamMember[]> {
   const res = await fetchWithRetry(`${API_BASE}/team`, { cache: "no-store" });
   if (!res.ok) throw new Error("Failed to fetch team");
-  return res.json();
+  const members: TeamMember[] = await res.json();
+  return members.map(resolvePhotoUrl);
 }
 
 export async function createMember(data: TeamMemberInput): Promise<TeamMember> {
@@ -55,7 +65,7 @@ export async function createMember(data: TeamMemberInput): Promise<TeamMember> {
     body: JSON.stringify(data),
   });
   if (!res.ok) throw new Error("Failed to create member");
-  return res.json();
+  return resolvePhotoUrl(await res.json());
 }
 
 export async function updateMember(
@@ -68,7 +78,7 @@ export async function updateMember(
     body: JSON.stringify(data),
   });
   if (!res.ok) throw new Error("Failed to update member");
-  return res.json();
+  return resolvePhotoUrl(await res.json());
 }
 
 export async function deleteMember(id: string): Promise<void> {
@@ -76,4 +86,15 @@ export async function deleteMember(id: string): Promise<void> {
     method: "DELETE",
   });
   if (!res.ok) throw new Error("Failed to delete member");
+}
+
+export async function uploadMemberPhoto(id: string, file: File): Promise<TeamMember> {
+  const formData = new FormData();
+  formData.append("file", file);
+  const res = await fetchWithRetry(`${API_BASE}/team/${id}/photo`, {
+    method: "POST",
+    body: formData,
+  });
+  if (!res.ok) throw new Error(`Failed to upload photo (HTTP ${res.status})`);
+  return resolvePhotoUrl(await res.json());
 }

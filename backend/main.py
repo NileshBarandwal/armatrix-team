@@ -208,6 +208,10 @@ def delete_member(member_id: str, db: Session = Depends(get_db)):
     row = db.query(TeamMemberDB).filter(TeamMemberDB.id == member_id).first()
     if not row:
         raise HTTPException(status_code=404, detail="Team member not found")
+    if row.photo_url and row.photo_url.startswith("/uploads/"):
+        filename = row.photo_url.split("/")[-1]
+        photo_path = UPLOADS_DIR / filename
+        photo_path.unlink(missing_ok=True)
     db.delete(row)
     db.commit()
     return {"message": "Team member deleted", "id": member_id}

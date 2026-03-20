@@ -239,16 +239,22 @@ export default function TeamPage() {
 
   useEffect(() => { fetchTeam(); }, [fetchTeam]);
 
-  const handleSubmit = async (data: TeamMemberInput) => {
+  const handleSubmit = async (data: TeamMemberInput): Promise<TeamMember> => {
     if (editTarget) {
       const updated = await updateMember(editTarget.id, data);
       setMembers((p) => p.map((m) => (m.id === editTarget.id ? updated : m)));
       addToast("Member updated");
+      return updated;
     } else {
       const created = await createMember(data);
       setMembers((p) => [...p, created]);
       addToast("Member added");
+      return created;
     }
+  };
+
+  const handleMemberUpdated = (member: TeamMember) => {
+    setMembers((p) => p.map((m) => (m.id === member.id ? member : m)));
   };
 
   const confirmDelete = async () => {
@@ -847,7 +853,7 @@ export default function TeamPage() {
 
       {/* Modals */}
       {modalOpen && (
-        <MemberModal member={editTarget} onClose={() => setModalOpen(false)} onSubmit={handleSubmit} />
+        <MemberModal member={editTarget} onClose={() => setModalOpen(false)} onSubmit={handleSubmit} onMemberUpdated={handleMemberUpdated} />
       )}
 
       <AnimatePresence>

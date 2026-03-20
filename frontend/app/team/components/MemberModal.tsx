@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { TeamMember, TeamMemberInput } from "@/lib/api";
+import { useEffect, useRef, useState } from "react";
+import { TeamMember, TeamMemberInput, uploadMemberPhoto } from "@/lib/api";
 
 const DEPARTMENTS = ["Leadership", "Engineering", "Operations", "Design", "Marketing", "Other"];
+const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp"];
 
 const EMPTY_FORM: TeamMemberInput = {
   name: "",
@@ -19,13 +20,17 @@ const EMPTY_FORM: TeamMemberInput = {
 interface Props {
   member?: TeamMember | null;
   onClose: () => void;
-  onSubmit: (data: TeamMemberInput) => Promise<void>;
+  onSubmit: (data: TeamMemberInput) => Promise<TeamMember>;
+  onMemberUpdated: (member: TeamMember) => void;
 }
 
-export default function MemberModal({ member, onClose, onSubmit }: Props) {
+export default function MemberModal({ member, onClose, onSubmit, onMemberUpdated }: Props) {
   const [form, setForm] = useState<TeamMemberInput>(EMPTY_FORM);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [photoFile, setPhotoFile] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (member) {
@@ -42,8 +47,17 @@ export default function MemberModal({ member, onClose, onSubmit }: Props) {
     } else {
       setForm(EMPTY_FORM);
     }
+    setPhotoFile(null);
+    setPreviewUrl(null);
     setError("");
   }, [member]);
+
+  // Revoke object URL on unmount or when preview changes
+  useEffect(() => {
+    return () => {
+      if (previewUrl) URL.revokeObjectURL(previewUrl);
+    };
+  }, [previewUrl]);
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
@@ -56,6 +70,19 @@ export default function MemberModal({ member, onClose, onSubmit }: Props) {
   const set = (field: keyof TeamMemberInput, value: string | number) =>
     setForm((f) => ({ ...f, [field]: value }));
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0] ?? null;
+    if (!file) return;
+    if (!ALLOWED_TYPES.includes(file.type)) {
+      setError("Only jpg, jpeg, png, and webp images are allowed.");
+      return;
+    }
+    setError("");
+    if (previewUrl) URL.revokeObjectURL(previewUrl);
+    setPhotoFile(file);
+    setPreviewUrl(URL.createObjectURL(file));
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.name.trim() || !form.role.trim() || !form.bio.trim()) {
@@ -65,14 +92,25 @@ export default function MemberModal({ member, onClose, onSubmit }: Props) {
     setLoading(true);
     setError("");
     try {
-      await onSubmit(form);
+      const saved = await onSubmit(form);
+      console.log("[MemberModal] onSubmit result:", saved);
+
+      if (photoFile) {
+        const withPhoto = await uploadMemberPhoto(saved.id, photoFile);
+        onMemberUpdated(withPhoto);
+      }
+
       onClose();
-    } catch {
-      setError("Something went wrong. Please try again.");
+    } catch (err) {
+      console.error("[MemberModal] handleSubmit error:", err);
+      setError(err instanceof Error ? err.message : "Something went wrong. Please try again.");
     } finally {
       setLoading(false);
     }
   };
+
+  // Determine the image src to show in the preview area
+  const displayPhoto = previewUrl ?? (member?.photo_url ?? null);
 
   return (
     <div
@@ -136,8 +174,94 @@ export default function MemberModal({ member, onClose, onSubmit }: Props) {
             <textarea value={form.bio} onChange={(e) => set("bio", e.target.value)} placeholder="A short description..." rows={3} className="field-input resize-none" />
           </Field>
 
-          <Field label="Photo URL">
-            <input type="url" value={form.photo_url} onChange={(e) => set("photo_url", e.target.value)} placeholder="https://..." className="field-input" />
+          {/* Photo upload */}
+          <Field label="Photo">
+            <div className="flex items-center gap-3">
+              {/* Preview circle */}
+              <div
+                className="flex-shrink-0 rounded-full overflow-hidden flex items-center justify-center"
+                style={{
+                  width: 48,
+                  height: 48,
+                  background: "rgba(255,255,255,0.05)",
+                  border: "1px solid rgba(255,255,255,0.1)",
+                }}
+              >
+                {displayPhoto ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={displayPhoto}
+                    alt="Photo preview"
+                    style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                  />
+                ) : (
+                  <PersonIcon />
+                )}
+              </div>
+
+              {/* File button + filename */}
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    className="text-xs px-3 py-1.5 transition-colors"
+                    style={{
+                      border: "1px solid rgba(255,255,255,0.15)",
+                      borderRadius: "6px",
+                      color: "rgba(255,255,255,0.6)",
+                      background: "rgba(255,255,255,0.03)",
+                      fontFamily: "var(--font-body)",
+                      cursor: "pointer",
+                    }}
+                    onMouseEnter={(e) => {
+                      (e.currentTarget as HTMLElement).style.borderColor = "rgba(255,200,100,0.4)";
+                      (e.currentTarget as HTMLElement).style.color = "rgba(255,255,255,0.9)";
+                    }}
+                    onMouseLeave={(e) => {
+                      (e.currentTarget as HTMLElement).style.borderColor = "rgba(255,255,255,0.15)";
+                      (e.currentTarget as HTMLElement).style.color = "rgba(255,255,255,0.6)";
+                    }}
+                  >
+                    {photoFile ? "Change photo" : "Choose photo"}
+                  </button>
+                  {(photoFile || form.photo_url) && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (previewUrl) URL.revokeObjectURL(previewUrl);
+                        setPhotoFile(null);
+                        setPreviewUrl(null);
+                        set("photo_url", "");
+                      }}
+                      className="text-xs transition-colors"
+                      style={{ color: "rgba(248,113,113,0.7)", fontFamily: "var(--font-body)", cursor: "pointer", background: "none", border: "none", padding: 0 }}
+                      onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.color = "#f87171")}
+                      onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.color = "rgba(248,113,113,0.7)")}
+                    >
+                      Remove photo
+                    </button>
+                  )}
+                </div>
+                {photoFile ? (
+                  <p className="mt-1 text-xs truncate" style={{ color: "rgba(255,255,255,0.35)", fontFamily: "var(--font-body)" }}>
+                    {photoFile.name}
+                  </p>
+                ) : (
+                  <p className="mt-1 text-xs" style={{ color: "rgba(255,255,255,0.2)", fontFamily: "var(--font-body)" }}>
+                    jpg, jpeg, png, webp
+                  </p>
+                )}
+              </div>
+            </div>
+
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"
+              onChange={handleFileChange}
+              style={{ display: "none" }}
+            />
           </Field>
 
           <div className="grid grid-cols-2 gap-3">
@@ -243,6 +367,15 @@ function CloseIcon() {
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <line x1="18" y1="6" x2="6" y2="18" />
       <line x1="6" y1="6" x2="18" y2="18" />
+    </svg>
+  );
+}
+
+function PersonIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.2)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="8" r="4" />
+      <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" />
     </svg>
   );
 }

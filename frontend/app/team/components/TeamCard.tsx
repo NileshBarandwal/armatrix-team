@@ -96,12 +96,18 @@ export default function TeamCard({ member, onEdit, onDelete }: Props) {
         ) : (
           <div className="w-12 h-12 rounded-full flex items-center justify-center text-sm font-semibold"
             style={{
-              background: dept.badge,
-              border: `1px solid ${dept.dot}33`,
-              color: dept.text,
+              background: "rgba(255,255,255,0.05)",
+              border: "1px solid rgba(255,255,255,0.12)",
               fontFamily: "var(--font-body)",
             }}>
-            {initials}
+            <span style={{
+              background: "linear-gradient(135deg, #ffc864 0%, #96b464 100%)",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+              backgroundClip: "text",
+            }}>
+              {initials}
+            </span>
           </div>
         )}
       </div>
